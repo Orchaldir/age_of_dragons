@@ -2,6 +2,7 @@ use crate::data::character::gender::Gender;
 use crate::data::name::Name;
 
 pub mod gender;
+pub mod race;
 
 /// The id of a [`Character`].
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]

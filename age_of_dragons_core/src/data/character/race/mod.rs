@@ -1,5 +1,5 @@
+use crate::data::character::race::gender::GenderOption;
 use crate::data::name::Name;
-use crate::data::race::gender::GenderOption;
 
 pub mod gender;
 
@@ -30,8 +30,8 @@ impl Race {
     /// Creates a race with a default [`Name`].
     ///
     /// ```
-    ///# use age_of_dragons_core::data::race::{Race, RaceId};
-    ///# use age_of_dragons_core::data::race::gender::GenderOption::*;
+    ///# use age_of_dragons_core::data::character::race::{Race, RaceId};
+    ///# use age_of_dragons_core::data::character::race::gender::GenderOption::*;
     /// let id = RaceId::new(32);
     /// let race = Race::new(id, TwoGenders);
     ///
