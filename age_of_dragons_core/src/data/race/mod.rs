@@ -1,3 +1,5 @@
+use crate::data::name::Name;
+
 /// The id of a [`Race`].
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
 pub struct RaceId(usize);
@@ -17,22 +19,37 @@ impl RaceId {
 #[derive(Clone, Debug, PartialEq)]
 pub struct Race {
     id: RaceId,
-    name: String,
+    name: Name,
 }
 
 impl Race {
-    pub fn new<S: Into<String>>(id: RaceId, name: S) -> Self {
+    /// Creates a race with a default [`Name`].
+    ///
+    /// ```
+    ///# use age_of_dragons_core::data::race::{Race, RaceId};
+    /// let id = RaceId::new(32);
+    /// let race = Race::new(id);
+    ///
+    /// assert_eq!(race.id(), id);
+    /// assert_eq!(race.name().name(), "Race 32");
+    /// ```
+    pub fn new(id: RaceId) -> Self {
         Self {
             id,
-            name: name.into(),
+            name: Name::new(format!("Race {}", id.0)).unwrap(),
         }
+    }
+
+    /// Creates a race with a valid [`Name`].
+    pub fn with_name(id: RaceId, name: Name) -> Self {
+        Self { id, name }
     }
 
     pub fn id(&self) -> RaceId {
         self.id
     }
 
-    pub fn name(&self) -> &str {
+    pub fn name(&self) -> &Name {
         &self.name
     }
 }
