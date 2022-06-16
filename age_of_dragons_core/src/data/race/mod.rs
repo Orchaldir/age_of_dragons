@@ -1,4 +1,7 @@
 use crate::data::name::Name;
+use crate::data::race::gender::GenderOption;
+
+pub mod gender;
 
 /// The id of a [`Race`].
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
@@ -20,6 +23,7 @@ impl RaceId {
 pub struct Race {
     id: RaceId,
     name: Name,
+    gender_option: GenderOption,
 }
 
 impl Race {
@@ -27,22 +31,29 @@ impl Race {
     ///
     /// ```
     ///# use age_of_dragons_core::data::race::{Race, RaceId};
+    ///# use age_of_dragons_core::data::race::gender::GenderOption::*;
     /// let id = RaceId::new(32);
-    /// let race = Race::new(id);
+    /// let race = Race::new(id, TwoGenders);
     ///
     /// assert_eq!(race.id(), id);
     /// assert_eq!(race.name().name(), "Race 32");
+    /// assert_eq!(race.gender_option(), TwoGenders);
     /// ```
-    pub fn new(id: RaceId) -> Self {
+    pub fn new(id: RaceId, gender_option: GenderOption) -> Self {
         Self {
             id,
             name: Name::new(format!("Race {}", id.0)).unwrap(),
+            gender_option,
         }
     }
 
     /// Creates a race with a valid [`Name`].
-    pub fn with_name(id: RaceId, name: Name) -> Self {
-        Self { id, name }
+    pub fn with_name(id: RaceId, name: Name, gender_option: GenderOption) -> Self {
+        Self {
+            id,
+            name,
+            gender_option,
+        }
     }
 
     pub fn id(&self) -> RaceId {
@@ -51,5 +62,9 @@ impl Race {
 
     pub fn name(&self) -> &Name {
         &self.name
+    }
+
+    pub fn gender_option(&self) -> GenderOption {
+        self.gender_option
     }
 }
