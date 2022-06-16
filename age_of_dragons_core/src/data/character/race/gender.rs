@@ -1,11 +1,11 @@
 use crate::data::character::gender::Gender;
 
-/// Which [`Gender`]s are available for [`Character`]s of this [`Race`]?
+/// Which [`Gender`]s are available for members of this [`Race`](crate::data::character::race::Race)?
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum GenderOption {
-    /// The [`Race`] has no gender, which limits the reproduction options.
+    /// The [`Race`](crate::data::character::race::Race) has no gender, which limits the reproduction options.
     NoGender,
-    /// The [`Race`] has males & females.
+    /// The [`Race`](crate::data::character::race::Race) has males & females.
     TwoGenders,
 }
 

@@ -17,7 +17,7 @@ impl RaceId {
     }
 }
 
-/// The race of a [`Character`].
+/// The race of a [`Character`](crate::data::character::Character).
 /// Examples are dragon, thunder bird & giant spider.
 #[derive(Clone, Debug, PartialEq)]
 pub struct Race {
