@@ -49,14 +49,8 @@ impl Race {
         let mut previous_max_age: Option<Duration> = None;
 
         for (i, stage) in stages.iter().enumerate() {
-            if stage.max_age().is_none() && i < last_i {
-                bail!(
-                    "Race {}'s life stage {} has no max age, but is not last!",
-                    name,
-                    i
-                );
-            } else if let Some(previous) = &previous_max_age {
-                if let Some(current) = stage.max_age() {
+            if let Some(current) = stage.max_age() {
+                if let Some(previous) = &previous_max_age {
                     if current <= previous {
                         bail!(
                             "Race {}'s life stage {} ends before previous stages!",
@@ -65,7 +59,15 @@ impl Race {
                         );
                     }
                 }
-            } else if i != stage.index() {
+            } else if i < last_i {
+                bail!(
+                    "Race {}'s life stage {} has no max age, but is not last!",
+                    name,
+                    i
+                );
+            }
+
+            if i != stage.index() {
                 bail!("Race {}'s life stage {} has wrong index!", name, i);
             }
 
