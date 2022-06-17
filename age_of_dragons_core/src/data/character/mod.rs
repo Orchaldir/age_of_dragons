@@ -34,29 +34,6 @@ pub struct Character {
 }
 
 impl Character {
-    /// Creates a character with a default [`Name`].
-    ///
-    /// ```
-    ///# use age_of_dragons_core::data::character::{Character, CharacterId};
-    ///# use age_of_dragons_core::data::character::gender::Gender::*;
-    /// let character = Character::new(11, Female);
-    ///
-    /// assert_eq!(character.id(), CharacterId::new(11));
-    /// assert_eq!(character.name().name(), "Character 11");
-    /// assert_eq!(character.gender(), Female);
-    /// ```
-    pub fn new(id: usize, gender: Gender) -> Self {
-        Self {
-            id: CharacterId::new(id),
-            name: Name::new(format!("Character {}", id)).unwrap(),
-            race_id: RaceId::new(0),
-            life_stage: 0,
-            gender,
-            birth_date: Date::default(),
-            death_date: None,
-        }
-    }
-
     /// Creates a character, if valid:
     ///
     /// ```
@@ -70,11 +47,11 @@ impl Character {
     /// let race = Race::simple(32, GenderOption::TwoGenders, vec![stage]);
     /// let date = Date::new(20);
     ///
-    /// assert!(Character::validate(11, "C0", &race, Female, date, None).is_ok());
-    /// assert!(Character::validate(11, "C0", &race, Male, date, None).is_ok());
-    /// assert!(Character::validate(11, "C0", &race, Genderless, date, None).is_err());
+    /// assert!(Character::new(11, "C0", &race, Female, date, None).is_ok());
+    /// assert!(Character::new(11, "C0", &race, Male, date, None).is_ok());
+    /// assert!(Character::new(11, "C0", &race, Genderless, date, None).is_err());
     /// ```
-    pub fn validate<S: Into<String>>(
+    pub fn new<S: Into<String>>(
         id: usize,
         name: S,
         race: &Race,
