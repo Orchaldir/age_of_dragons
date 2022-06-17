@@ -2,7 +2,7 @@ use crate::data::character::gender::Gender;
 use crate::data::character::race::{Race, RaceId};
 use crate::data::name::Name;
 use crate::data::time::{Date, Duration};
-use anyhow::{bail, Result};
+use anyhow::{bail, Context, Result};
 
 pub mod gender;
 pub mod race;
@@ -60,30 +60,30 @@ impl Character {
     /// Creates a character, if valid:
     ///
     /// ```
-    ///# use age_of_dragons_core::data::character::{Character, CharacterId};
+    ///# use age_of_dragons_core::data::character::Character;
     ///# use age_of_dragons_core::data::character::gender::Gender::*;
-    ///# use age_of_dragons_core::data::character::race::{Race, RaceId};
+    ///# use age_of_dragons_core::data::character::race::Race;
     ///# use age_of_dragons_core::data::character::race::gender::GenderOption;
     ///# use age_of_dragons_core::data::character::race::stage::LifeStage;
-    ///# use age_of_dragons_core::data::name::Name;
     ///# use age_of_dragons_core::data::time::Date;
     /// let stage = LifeStage::simple();
     /// let race = Race::simple(32, GenderOption::TwoGenders, vec![stage]);
-    /// let name = Name::new("C0").unwrap();
     /// let date = Date::new(20);
     ///
-    /// assert!(Character::validate(11, name.clone(), &race, Female, date, None).is_ok());
-    /// assert!(Character::validate(11, name.clone(), &race, Male, date, None).is_ok());
-    /// assert!(Character::validate(11, name, &race, Genderless, date, None).is_err());
+    /// assert!(Character::validate(11, "C0", &race, Female, date, None).is_ok());
+    /// assert!(Character::validate(11, "C0", &race, Male, date, None).is_ok());
+    /// assert!(Character::validate(11, "C0", &race, Genderless, date, None).is_err());
     /// ```
-    pub fn validate(
+    pub fn validate<S: Into<String>>(
         id: usize,
-        name: Name,
+        name: S,
         race: &Race,
         gender: Gender,
         birth_date: Date,
         death_date: Option<Date>,
     ) -> Result<Self> {
+        let name = name.into();
+
         if !race.gender_option().is_valid(gender) {
             bail!(
                 "Character {} is invalid, because {:?} doesn't match the race's {:?}!",
@@ -92,6 +92,8 @@ impl Character {
                 race.gender_option()
             );
         }
+
+        let name = Name::new(name).with_context(|| format!("Failed to create character {}", id))?;
 
         Ok(Self {
             id: CharacterId::new(id),

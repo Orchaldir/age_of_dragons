@@ -113,7 +113,7 @@ impl Race {
     /// Calculates the [`LifeStage`] of a [`Character`](crate::data::character::Character) based on its age.
     ///
     /// ```
-    ///# use age_of_dragons_core::data::character::race::{Race, RaceId};
+    ///# use age_of_dragons_core::data::character::race::Race;
     ///# use age_of_dragons_core::data::character::race::gender::GenderOption;
     ///# use age_of_dragons_core::data::character::race::stage::LifeStage;
     ///# use age_of_dragons_core::data::name::Name;
@@ -154,6 +154,13 @@ mod tests {
         let stage1 = LifeStage::new(Name::new("LF1").unwrap(), 1, None);
 
         assert!(Race::new(0, "Test", TwoGenders, vec![stage0, stage1]).is_ok());
+    }
+
+    #[test]
+    fn test_new_with_invalid_name() {
+        let stage = LifeStage::new(Name::new("LF").unwrap(), 1, None);
+
+        assert!(Race::new(0, "", TwoGenders, vec![stage]).is_err());
     }
 
     #[test]
