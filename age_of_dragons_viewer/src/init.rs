@@ -18,7 +18,7 @@ pub fn init_simulation() -> SimulationData {
     SimulationData {
         race_manager,
         character_manager,
-        date: Date::new(0),
+        date: Date::new(2),
     }
 }
 

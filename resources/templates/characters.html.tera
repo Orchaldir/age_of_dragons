@@ -7,7 +7,7 @@
     <p><b>Total:</b> {{ total }}</p>
     <ul>
     {% for c in characters %}
-      <li>{{ c.1 }}</li>
+      <li><a href="/character/{{ c.0 }}">{{ c.1 }}</a></li>
     {% endfor %}
     </ul>
     <p><a href="/">Back</a></p>

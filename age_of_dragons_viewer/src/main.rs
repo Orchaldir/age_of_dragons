@@ -2,6 +2,7 @@
 extern crate rocket;
 
 use crate::init::init_simulation;
+use age_of_dragons_core::data::character::CharacterId;
 use age_of_dragons_core::data::SimulationData;
 use anyhow::Result;
 use rocket::{routes, State};
@@ -47,11 +48,30 @@ fn characters(data: &State<SimulationData>) -> Template {
     )
 }
 
+#[get("/character/<id>")]
+fn character(data: &State<SimulationData>, id: usize) -> Option<Template> {
+    data.character_manager
+        .get(CharacterId::new(id))
+        .map(|character| {
+            Template::render(
+                "character",
+                context! {
+                    name: character.name().name(),
+                    id: id,
+                    race: "dfcds",
+                    gender: format!("{:?}", character.gender()),
+                    birth_date: character.birth_date().year(),
+                    age: character.calculate_age(data.date).year(),
+                },
+            )
+        })
+}
+
 #[rocket::main]
 async fn main() -> Result<()> {
     if let Err(e) = rocket::build()
         .manage(init_simulation())
-        .mount("/", routes![home, characters])
+        .mount("/", routes![home, characters, character])
         .attach(Template::fairing())
         .launch()
         .await
