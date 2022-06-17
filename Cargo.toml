@@ -1,0 +1,5 @@
+[workspace]
+
+members = [
+    "age_of_dragons_core",
+]
