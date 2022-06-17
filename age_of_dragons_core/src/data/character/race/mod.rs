@@ -1,7 +1,9 @@
 use crate::data::character::race::gender::GenderOption;
+use crate::data::character::race::stage::LifeStage;
 use crate::data::name::Name;
 
 pub mod gender;
+pub mod stage;
 
 /// The id of a [`Race`].
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
@@ -24,35 +26,32 @@ pub struct Race {
     id: RaceId,
     name: Name,
     gender_option: GenderOption,
+    stages: Vec<LifeStage>,
 }
 
 impl Race {
-    /// Creates a race with a default [`Name`].
-    ///
-    /// ```
-    ///# use age_of_dragons_core::data::character::race::{Race, RaceId};
-    ///# use age_of_dragons_core::data::character::race::gender::GenderOption::*;
-    /// let id = RaceId::new(32);
-    /// let race = Race::new(id, TwoGenders);
-    ///
-    /// assert_eq!(race.id(), id);
-    /// assert_eq!(race.name().name(), "Race 32");
-    /// assert_eq!(race.gender_option(), TwoGenders);
-    /// ```
-    pub fn new(id: RaceId, gender_option: GenderOption) -> Self {
-        Self {
-            id,
-            name: Name::new(format!("Race {}", id.0)).unwrap(),
-            gender_option,
-        }
-    }
-
-    /// Creates a race with a valid [`Name`].
-    pub fn with_name(id: RaceId, name: Name, gender_option: GenderOption) -> Self {
+    /// Creates a race.
+    pub fn new(
+        id: RaceId,
+        name: Name,
+        gender_option: GenderOption,
+        stages: Vec<LifeStage>,
+    ) -> Self {
         Self {
             id,
             name,
             gender_option,
+            stages,
+        }
+    }
+
+    /// A simple way to create a race for testing.
+    pub fn simple(id: usize, gender_option: GenderOption, stages: Vec<LifeStage>) -> Self {
+        Self {
+            id: RaceId::new(id),
+            name: Name::new(format!("Race {}", id)).unwrap(),
+            gender_option,
+            stages,
         }
     }
 
@@ -66,5 +65,9 @@ impl Race {
 
     pub fn gender_option(&self) -> GenderOption {
         self.gender_option
+    }
+
+    pub fn stages(&self) -> &[LifeStage] {
+        &self.stages
     }
 }

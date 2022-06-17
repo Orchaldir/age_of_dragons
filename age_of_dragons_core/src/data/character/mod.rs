@@ -58,8 +58,10 @@ impl Character {
     ///# use age_of_dragons_core::data::character::gender::Gender;
     ///# use age_of_dragons_core::data::character::race::{Race, RaceId};
     ///# use age_of_dragons_core::data::character::race::gender::GenderOption::*;
+    ///# use age_of_dragons_core::data::character::race::stage::LifeStage;
     ///# use age_of_dragons_core::data::name::Name;
-    /// let race = Race::new(RaceId::new(32), TwoGenders);
+    /// let stage = LifeStage::simple();
+    /// let race = Race::simple(32, TwoGenders, vec![stage]);
     /// let id = CharacterId::new(11);
     /// let name = Name::new("C0").unwrap();
     ///
