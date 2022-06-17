@@ -1,0 +1,6 @@
+{% extends "base" %}
+
+{% block content %}
+    <p><h1>Age of Dragons</h1></p>
+    <p><b>Characters:</b> {{ characters }}</p>
+{% endblock content %}
