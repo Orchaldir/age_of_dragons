@@ -76,7 +76,7 @@ impl Character {
     ///
     /// assert!(Character::validate(id, name.clone(), &race, Female, date, None).is_ok());
     /// assert!(Character::validate(id, name.clone(), &race, Male, date, None).is_ok());
-    /// assert!(Character::validate(id, name, &race, NoGender, date, None).is_err());
+    /// assert!(Character::validate(id, name, &race, Genderless, date, None).is_err());
     /// ```
     pub fn validate(
         id: CharacterId,

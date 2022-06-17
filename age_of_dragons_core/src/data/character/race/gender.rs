@@ -14,19 +14,19 @@ impl GenderOption {
     ///
     /// ```
     ///# use age_of_dragons_core::data::character::race::gender::GenderOption::*;
-    ///# use age_of_dragons_core::data::character::gender::Gender;
+    ///# use age_of_dragons_core::data::character::gender::Gender::*;
     ///
-    /// assert!(!NoGender.is_valid(Gender::Female));
-    /// assert!(!NoGender.is_valid(Gender::Male));
-    /// assert!(NoGender.is_valid(Gender::NoGender));
+    /// assert!(!NoGender.is_valid(Female));
+    /// assert!(!NoGender.is_valid(Male));
+    /// assert!(NoGender.is_valid(Genderless));
     ///
-    /// assert!(TwoGenders.is_valid(Gender::Female));
-    /// assert!(TwoGenders.is_valid(Gender::Male));
-    /// assert!(!TwoGenders.is_valid(Gender::NoGender));
+    /// assert!(TwoGenders.is_valid(Female));
+    /// assert!(TwoGenders.is_valid(Male));
+    /// assert!(!TwoGenders.is_valid(Genderless));
     /// ```
     pub fn is_valid(&self, gender: Gender) -> bool {
         match self {
-            GenderOption::NoGender => gender == Gender::NoGender,
+            GenderOption::NoGender => gender == Gender::Genderless,
             GenderOption::TwoGenders => gender == Gender::Female || gender == Gender::Male,
         }
     }
