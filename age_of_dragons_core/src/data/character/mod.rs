@@ -39,17 +39,16 @@ impl Character {
     /// ```
     ///# use age_of_dragons_core::data::character::{Character, CharacterId};
     ///# use age_of_dragons_core::data::character::gender::Gender::*;
-    /// let id = CharacterId::new(11);
-    /// let character = Character::new(id, Female);
+    /// let character = Character::new(11, Female);
     ///
-    /// assert_eq!(character.id(), id);
+    /// assert_eq!(character.id(), CharacterId::new(11));
     /// assert_eq!(character.name().name(), "Character 11");
     /// assert_eq!(character.gender(), Female);
     /// ```
-    pub fn new(id: CharacterId, gender: Gender) -> Self {
+    pub fn new(id: usize, gender: Gender) -> Self {
         Self {
-            id,
-            name: Name::new(format!("Character {}", id.0)).unwrap(),
+            id: CharacterId::new(id),
+            name: Name::new(format!("Character {}", id)).unwrap(),
             race_id: RaceId::new(0),
             life_stage: 0,
             gender,
@@ -70,16 +69,15 @@ impl Character {
     ///# use age_of_dragons_core::data::time::Date;
     /// let stage = LifeStage::simple();
     /// let race = Race::simple(32, GenderOption::TwoGenders, vec![stage]);
-    /// let id = CharacterId::new(11);
     /// let name = Name::new("C0").unwrap();
     /// let date = Date::new(20);
     ///
-    /// assert!(Character::validate(id, name.clone(), &race, Female, date, None).is_ok());
-    /// assert!(Character::validate(id, name.clone(), &race, Male, date, None).is_ok());
-    /// assert!(Character::validate(id, name, &race, Genderless, date, None).is_err());
+    /// assert!(Character::validate(11, name.clone(), &race, Female, date, None).is_ok());
+    /// assert!(Character::validate(11, name.clone(), &race, Male, date, None).is_ok());
+    /// assert!(Character::validate(11, name, &race, Genderless, date, None).is_err());
     /// ```
     pub fn validate(
-        id: CharacterId,
+        id: usize,
         name: Name,
         race: &Race,
         gender: Gender,
@@ -89,14 +87,14 @@ impl Character {
         if !race.gender_option().is_valid(gender) {
             bail!(
                 "Character {} is invalid, because {:?} doesn't match the race's {:?}!",
-                id.0,
+                id,
                 gender,
                 race.gender_option()
             );
         }
 
         Ok(Self {
-            id,
+            id: CharacterId::new(id),
             name,
             gender,
             race_id: race.id(),

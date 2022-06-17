@@ -34,7 +34,7 @@ pub struct Race {
 impl Race {
     /// Creates a race, if valid.
     pub fn new<S: Into<String>>(
-        id: RaceId,
+        id: usize,
         name: S,
         gender_option: GenderOption,
         stages: Vec<LifeStage>,
@@ -74,10 +74,10 @@ impl Race {
             previous_max_age = *stage.max_age();
         }
 
-        let name = Name::new(name).with_context(|| format!("Failed to create race {}", id.0))?;
+        let name = Name::new(name).with_context(|| format!("Failed to create race {}", id))?;
 
         Ok(Self {
-            id,
+            id: RaceId::new(id),
             name,
             gender_option,
             stages,
@@ -153,12 +153,12 @@ mod tests {
         let stage0 = LifeStage::new(Name::new("LF0").unwrap(), 0, Some(Duration::new(44)));
         let stage1 = LifeStage::new(Name::new("LF1").unwrap(), 1, None);
 
-        assert!(Race::new(RaceId::new(0), "Test", TwoGenders, vec![stage0, stage1]).is_ok());
+        assert!(Race::new(0, "Test", TwoGenders, vec![stage0, stage1]).is_ok());
     }
 
     #[test]
     fn test_new_without_stages() {
-        assert!(Race::new(RaceId::new(0), "Test", TwoGenders, vec![]).is_err());
+        assert!(Race::new(0, "Test", TwoGenders, vec![]).is_err());
     }
 
     #[test]
@@ -166,7 +166,7 @@ mod tests {
         let stage0 = LifeStage::new(Name::new("LF0").unwrap(), 0, None);
         let stage1 = LifeStage::new(Name::new("LF1").unwrap(), 1, None);
 
-        assert!(Race::new(RaceId::new(0), "Test", TwoGenders, vec![stage0, stage1]).is_err());
+        assert!(Race::new(0, "Test", TwoGenders, vec![stage0, stage1]).is_err());
     }
 
     #[test]
@@ -174,7 +174,7 @@ mod tests {
         let stage0 = LifeStage::new(Name::new("LF0").unwrap(), 0, Some(Duration::new(20)));
         let stage1 = LifeStage::new(Name::new("LF1").unwrap(), 1, Some(Duration::new(10)));
 
-        assert!(Race::new(RaceId::new(0), "Test", TwoGenders, vec![stage0, stage1]).is_err());
+        assert!(Race::new(0, "Test", TwoGenders, vec![stage0, stage1]).is_err());
     }
 
     #[test]
@@ -182,6 +182,6 @@ mod tests {
         let stage0 = LifeStage::new(Name::new("LF0").unwrap(), 1, Some(Duration::new(44)));
         let stage1 = LifeStage::new(Name::new("LF1").unwrap(), 0, None);
 
-        assert!(Race::new(RaceId::new(0), "Test", TwoGenders, vec![stage0, stage1]).is_err());
+        assert!(Race::new(0, "Test", TwoGenders, vec![stage0, stage1]).is_err());
     }
 }
