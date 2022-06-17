@@ -1,5 +1,5 @@
 /// Currently dates are limited to years.
-#[derive(Default, Copy, Clone, Debug, Eq, PartialEq, Hash)]
+#[derive(Default, Copy, Clone, Debug, Eq, PartialEq, Hash, Ord, PartialOrd)]
 pub struct Date(u32);
 
 impl Date {
@@ -32,7 +32,7 @@ impl Date {
 }
 
 /// A duration in years.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd)]
 pub struct Duration(u32);
 
 impl Duration {

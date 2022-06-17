@@ -27,6 +27,7 @@ pub struct Character {
     id: CharacterId,
     name: Name,
     race_id: RaceId,
+    life_stage: usize,
     gender: Gender,
     birth_date: Date,
     death_date: Option<Date>,
@@ -50,6 +51,7 @@ impl Character {
             id,
             name: Name::new(format!("Character {}", id.0)).unwrap(),
             race_id: RaceId::new(0),
+            life_stage: 0,
             gender,
             birth_date: Date::default(),
             death_date: None,
@@ -98,6 +100,7 @@ impl Character {
             name,
             gender,
             race_id: race.id(),
+            life_stage: 0,
             birth_date,
             death_date,
         })

@@ -1,6 +1,7 @@
 use crate::data::character::race::gender::GenderOption;
 use crate::data::character::race::stage::LifeStage;
 use crate::data::name::Name;
+use crate::data::time::Duration;
 
 pub mod gender;
 pub mod stage;
@@ -69,5 +70,36 @@ impl Race {
 
     pub fn stages(&self) -> &[LifeStage] {
         &self.stages
+    }
+
+    /// Calculates the [`LifeStage`] of a [`Character`](crate::data::character::Character) based on its age.
+    ///
+    /// ```
+    ///# use age_of_dragons_core::data::character::race::{Race, RaceId};
+    ///# use age_of_dragons_core::data::character::race::gender::GenderOption;
+    ///# use age_of_dragons_core::data::character::race::stage::LifeStage;
+    ///# use age_of_dragons_core::data::name::Name;
+    ///# use age_of_dragons_core::data::time::Duration;
+    /// let stage0 = LifeStage::new(Name::new("LS0").unwrap(), 0, Some(Duration::new(1)));
+    /// let stage1 = LifeStage::new(Name::new("LS1").unwrap(), 1, Some(Duration::new(3)));
+    /// let race = Race::simple(32, GenderOption::TwoGenders, vec![stage0.clone(), stage1.clone()]);
+    ///
+    /// assert_eq!(race.calculate_life_stage(&Duration::new(0)), Some(&stage0));
+    /// assert_eq!(race.calculate_life_stage(&Duration::new(1)), Some(&stage1));
+    /// assert_eq!(race.calculate_life_stage(&Duration::new(2)), Some(&stage1));
+    /// assert_eq!(race.calculate_life_stage(&Duration::new(3)), None);
+    /// ```
+    pub fn calculate_life_stage(&self, age: &Duration) -> Option<&LifeStage> {
+        for stage in &self.stages {
+            if let Some(duration) = stage.duration() {
+                if age < duration {
+                    return Some(stage);
+                }
+            } else {
+                return Some(stage);
+            }
+        }
+
+        None
     }
 }
