@@ -1,4 +1,5 @@
 use crate::data::character::race::{Race, RaceId};
+use anyhow::Result;
 
 /// Stores all the [`Race`]s.
 #[derive(Default, Debug)]
@@ -8,13 +9,13 @@ pub struct RaceMgr {
 
 impl RaceMgr {
     /// Uses the function *f* to create a [`Race`] with the next [`RaceId`].
-    pub fn create<F>(&mut self, f: F) -> RaceId
+    pub fn create<F>(&mut self, f: F) -> Result<RaceId>
     where
-        F: FnOnce(RaceId) -> Race,
+        F: FnOnce(RaceId) -> Result<Race>,
     {
         let id = RaceId::new(self.races.len());
-        self.races.push(f(id));
-        id
+        self.races.push(f(id)?);
+        Ok(id)
     }
 
     pub fn get_all(&self) -> &Vec<Race> {
