@@ -14,7 +14,9 @@ fn home(data: &State<SimulationData>) -> Template {
     Template::render(
         "home",
         context! {
-            characters: 6,
+            races: data.race_manager.get_all().len(),
+            characters: data.character_manager.get_all().len(),
+            year: data.date.year(),
         },
     )
 }
