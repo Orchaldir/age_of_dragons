@@ -118,8 +118,8 @@ impl Race {
     ///# use age_of_dragons_core::data::character::race::stage::LifeStage;
     ///# use age_of_dragons_core::data::name::Name;
     ///# use age_of_dragons_core::data::time::Duration;
-    /// let stage0 = LifeStage::new(Name::new("LS0").unwrap(), 0, Some(Duration::new(1)));
-    /// let stage1 = LifeStage::new(Name::new("LS1").unwrap(), 1, Some(Duration::new(3)));
+    /// let stage0 = LifeStage::new("LS0", 0, Some(Duration::new(1))).unwrap();
+    /// let stage1 = LifeStage::new("LS1", 1, Some(Duration::new(3))).unwrap();
     /// let race = Race::simple(32, GenderOption::TwoGenders, vec![stage0.clone(), stage1.clone()]);
     ///
     /// assert_eq!(race.calculate_life_stage(&Duration::new(0)), Some(&stage0));
@@ -150,15 +150,15 @@ mod tests {
 
     #[test]
     fn test_new() {
-        let stage0 = LifeStage::new(Name::new("LF0").unwrap(), 0, Some(Duration::new(44)));
-        let stage1 = LifeStage::new(Name::new("LF1").unwrap(), 1, None);
+        let stage0 = LifeStage::new("LF0", 0, Some(Duration::new(44))).unwrap();
+        let stage1 = LifeStage::new("LF1", 1, None).unwrap();
 
         assert!(Race::new(0, "Test", TwoGenders, vec![stage0, stage1]).is_ok());
     }
 
     #[test]
     fn test_new_with_invalid_name() {
-        let stage = LifeStage::new(Name::new("LF").unwrap(), 1, None);
+        let stage = LifeStage::new("LF", 1, None).unwrap();
 
         assert!(Race::new(0, "", TwoGenders, vec![stage]).is_err());
     }
@@ -170,24 +170,24 @@ mod tests {
 
     #[test]
     fn test_new_with_early_stage_is_endless() {
-        let stage0 = LifeStage::new(Name::new("LF0").unwrap(), 0, None);
-        let stage1 = LifeStage::new(Name::new("LF1").unwrap(), 1, None);
+        let stage0 = LifeStage::new("LF0", 0, None).unwrap();
+        let stage1 = LifeStage::new("LF1", 1, None).unwrap();
 
         assert!(Race::new(0, "Test", TwoGenders, vec![stage0, stage1]).is_err());
     }
 
     #[test]
     fn test_new_with_early_stage_ends_after_later_stage() {
-        let stage0 = LifeStage::new(Name::new("LF0").unwrap(), 0, Some(Duration::new(20)));
-        let stage1 = LifeStage::new(Name::new("LF1").unwrap(), 1, Some(Duration::new(10)));
+        let stage0 = LifeStage::new("LF0", 0, Some(Duration::new(20))).unwrap();
+        let stage1 = LifeStage::new("LF1", 1, Some(Duration::new(10))).unwrap();
 
         assert!(Race::new(0, "Test", TwoGenders, vec![stage0, stage1]).is_err());
     }
 
     #[test]
     fn test_new_with_wrong_index() {
-        let stage0 = LifeStage::new(Name::new("LF0").unwrap(), 1, Some(Duration::new(44)));
-        let stage1 = LifeStage::new(Name::new("LF1").unwrap(), 0, None);
+        let stage0 = LifeStage::new("LF0", 1, Some(Duration::new(44))).unwrap();
+        let stage1 = LifeStage::new("LF1", 0, None).unwrap();
 
         assert!(Race::new(0, "Test", TwoGenders, vec![stage0, stage1]).is_err());
     }
