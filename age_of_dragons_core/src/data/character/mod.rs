@@ -67,6 +67,13 @@ impl Character {
                 gender,
                 race.gender_option()
             );
+        } else if death_date.map(|d| d < birth_date).unwrap_or(false) {
+            bail!(
+                "The character {}'s death {:?} happened before  its birth {:?}!",
+                id,
+                death_date.unwrap(),
+                birth_date
+            );
         }
 
         let name = Name::new(name).with_context(|| format!("Failed to create character {}", id))?;
@@ -132,6 +139,22 @@ mod tests {
     use super::*;
     use crate::data::character::gender::Gender::Female;
     use crate::data::character::race::gender::GenderOption::TwoGenders;
+
+    #[test]
+    fn test_new_with_invalid_name() {
+        let race = Race::simple(32, TwoGenders);
+
+        assert!(Character::new(0, "", &race, Female, Date::new(20), None).is_err());
+    }
+
+    #[test]
+    fn test_new_with_death_before_birth() {
+        let race = Race::simple(32, TwoGenders);
+
+        assert!(
+            Character::new(0, "C0", &race, Female, Date::new(20), Some(Date::new(10))).is_err()
+        );
+    }
 
     #[test]
     fn test_alive_character() {
