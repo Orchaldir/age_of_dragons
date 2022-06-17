@@ -2,6 +2,7 @@ use crate::data::character::race::gender::GenderOption;
 use crate::data::character::race::stage::LifeStage;
 use crate::data::name::Name;
 use crate::data::time::Duration;
+use anyhow::{bail, Context, Result};
 
 pub mod gender;
 pub mod stage;
@@ -31,19 +32,54 @@ pub struct Race {
 }
 
 impl Race {
-    /// Creates a race.
-    pub fn new(
+    /// Creates a race, if valid.
+    pub fn new<S: Into<String>>(
         id: RaceId,
-        name: Name,
+        name: S,
         gender_option: GenderOption,
         stages: Vec<LifeStage>,
-    ) -> Self {
-        Self {
+    ) -> Result<Self> {
+        let name = name.into();
+
+        if stages.is_empty() {
+            bail!("Race {} has no life stages!", name);
+        }
+
+        let last_i = stages.len() - 1;
+        let mut previous_max_age: Option<Duration> = None;
+
+        for (i, stage) in stages.iter().enumerate() {
+            if stage.max_age().is_none() && i < last_i {
+                bail!(
+                    "Race {}'s life stage {} has no max age, but is not last!",
+                    name,
+                    i
+                );
+            } else if let Some(previous) = &previous_max_age {
+                if let Some(current) = stage.max_age() {
+                    if current <= previous {
+                        bail!(
+                            "Race {}'s life stage {} ends before previous stages!",
+                            name,
+                            i
+                        );
+                    }
+                }
+            } else if i != stage.index() {
+                bail!("Race {}'s life stage {} has wrong index!", name, i);
+            }
+
+            previous_max_age = *stage.max_age();
+        }
+
+        let name = Name::new(name).with_context(|| format!("Failed to create race {}", id.0))?;
+
+        Ok(Self {
             id,
             name,
             gender_option,
             stages,
-        }
+        })
     }
 
     /// A simple way to create a race for testing.
@@ -102,5 +138,48 @@ impl Race {
         }
 
         None
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use GenderOption::TwoGenders;
+
+    #[test]
+    fn test_new() {
+        let stage0 = LifeStage::new(Name::new("LF0").unwrap(), 0, Some(Duration::new(44)));
+        let stage1 = LifeStage::new(Name::new("LF1").unwrap(), 1, None);
+
+        assert!(Race::new(RaceId::new(0), "Test", TwoGenders, vec![stage0, stage1]).is_ok());
+    }
+
+    #[test]
+    fn test_new_without_stages() {
+        assert!(Race::new(RaceId::new(0), "Test", TwoGenders, vec![]).is_err());
+    }
+
+    #[test]
+    fn test_new_with_early_stage_is_endless() {
+        let stage0 = LifeStage::new(Name::new("LF0").unwrap(), 0, None);
+        let stage1 = LifeStage::new(Name::new("LF1").unwrap(), 1, None);
+
+        assert!(Race::new(RaceId::new(0), "Test", TwoGenders, vec![stage0, stage1]).is_err());
+    }
+
+    #[test]
+    fn test_new_with_early_stage_ends_after_later_stage() {
+        let stage0 = LifeStage::new(Name::new("LF0").unwrap(), 0, Some(Duration::new(20)));
+        let stage1 = LifeStage::new(Name::new("LF1").unwrap(), 1, Some(Duration::new(10)));
+
+        assert!(Race::new(RaceId::new(0), "Test", TwoGenders, vec![stage0, stage1]).is_err());
+    }
+
+    #[test]
+    fn test_new_with_wrong_index() {
+        let stage0 = LifeStage::new(Name::new("LF0").unwrap(), 1, Some(Duration::new(44)));
+        let stage1 = LifeStage::new(Name::new("LF1").unwrap(), 0, None);
+
+        assert!(Race::new(RaceId::new(0), "Test", TwoGenders, vec![stage0, stage1]).is_err());
     }
 }
