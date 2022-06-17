@@ -6,17 +6,17 @@ use crate::data::time::Duration;
 pub struct LifeStage {
     name: Name,
     index: usize,
-    /// The life stage lasts forever, if the duration is None.
-    duration: Option<Duration>,
+    /// The life stage lasts forever, if it has no max age.
+    max_age: Option<Duration>,
 }
 
 impl LifeStage {
     /// Creates a life stage.
-    pub fn new(name: Name, index: usize, duration: Option<Duration>) -> Self {
+    pub fn new(name: Name, index: usize, max_age: Option<Duration>) -> Self {
         Self {
             name,
             index,
-            duration,
+            max_age,
         }
     }
 
@@ -25,7 +25,7 @@ impl LifeStage {
         Self {
             name: Name::new("Life Stage").unwrap(),
             index: 0,
-            duration: None,
+            max_age: None,
         }
     }
 
@@ -37,7 +37,7 @@ impl LifeStage {
         self.index
     }
 
-    pub fn duration(&self) -> &Option<Duration> {
-        &self.duration
+    pub fn max_age(&self) -> &Option<Duration> {
+        &self.max_age
     }
 }

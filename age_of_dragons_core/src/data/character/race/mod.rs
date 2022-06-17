@@ -85,14 +85,15 @@ impl Race {
     /// let race = Race::simple(32, GenderOption::TwoGenders, vec![stage0.clone(), stage1.clone()]);
     ///
     /// assert_eq!(race.calculate_life_stage(&Duration::new(0)), Some(&stage0));
-    /// assert_eq!(race.calculate_life_stage(&Duration::new(1)), Some(&stage1));
+    /// assert_eq!(race.calculate_life_stage(&Duration::new(1)), Some(&stage0));
     /// assert_eq!(race.calculate_life_stage(&Duration::new(2)), Some(&stage1));
-    /// assert_eq!(race.calculate_life_stage(&Duration::new(3)), None);
+    /// assert_eq!(race.calculate_life_stage(&Duration::new(3)), Some(&stage1));
+    /// assert_eq!(race.calculate_life_stage(&Duration::new(4)), None);
     /// ```
     pub fn calculate_life_stage(&self, age: &Duration) -> Option<&LifeStage> {
         for stage in &self.stages {
-            if let Some(duration) = stage.duration() {
-                if age < duration {
+            if let Some(max_age) = stage.max_age() {
+                if age <= max_age {
                     return Some(stage);
                 }
             } else {
