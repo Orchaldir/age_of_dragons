@@ -30,6 +30,7 @@ pub struct Character {
     life_stage: usize,
     gender: Gender,
     birth_date: Date,
+    /// The death date is only available, if the character is death.
     death_date: Option<Date>,
 }
 
@@ -40,11 +41,9 @@ impl Character {
     ///# use age_of_dragons_core::data::character::Character;
     ///# use age_of_dragons_core::data::character::gender::Gender::*;
     ///# use age_of_dragons_core::data::character::race::Race;
-    ///# use age_of_dragons_core::data::character::race::gender::GenderOption;
-    ///# use age_of_dragons_core::data::character::race::stage::LifeStage;
+    ///# use age_of_dragons_core::data::character::race::gender::GenderOption::*;
     ///# use age_of_dragons_core::data::time::Date;
-    /// let stage = LifeStage::simple();
-    /// let race = Race::simple(32, GenderOption::TwoGenders, vec![stage]);
+    /// let race = Race::simple(32, TwoGenders);
     /// let date = Date::new(20);
     ///
     /// assert!(Character::new(11, "C0", &race, Female, date, None).is_ok());
@@ -91,6 +90,10 @@ impl Character {
         &self.name
     }
 
+    pub fn race_id(&self) -> RaceId {
+        self.race_id
+    }
+
     pub fn gender(&self) -> Gender {
         self.gender
     }
@@ -118,5 +121,33 @@ impl Character {
             date
         }
         .get_duration_since(self.birth_date)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::data::character::gender::Gender::Female;
+    use crate::data::character::race::gender::GenderOption::TwoGenders;
+
+    #[test]
+    fn test_alive_character() {
+        let race = Race::simple(32, TwoGenders);
+        let character = Character::new(0, "C0", &race, Female, Date::new(20), None).unwrap();
+
+        assert_eq!(character.death_date(), None);
+        assert!(character.is_alive());
+        assert!(!character.is_dead());
+    }
+
+    #[test]
+    fn test_dead_character() {
+        let race = Race::simple(32, TwoGenders);
+        let date = Date::new(40);
+        let character = Character::new(0, "C0", &race, Female, Date::new(20), Some(date)).unwrap();
+
+        assert_eq!(character.death_date(), Some(date));
+        assert!(!character.is_alive());
+        assert!(character.is_dead());
     }
 }
