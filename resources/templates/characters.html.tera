@@ -4,6 +4,11 @@
     <p><h1>Characters</h1></p>
     <p><b>Alive:</b> {{ alive }}</p>
     <p><b>Dead:</b> {{ total - alive }}</p>
-    <p><b>Year:</b> {{ total }}</p>
+    <p><b>Total:</b> {{ total }}</p>
+    <ul>
+    {% for c in characters %}
+      <li>{{ c.1 }}</li>
+    {% endfor %}
+    </ul>
     <p><a href="/">Back</a></p>
 {% endblock content %}

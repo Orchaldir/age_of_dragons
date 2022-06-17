@@ -24,13 +24,25 @@ fn home(data: &State<SimulationData>) -> Template {
 #[get("/character")]
 fn characters(data: &State<SimulationData>) -> Template {
     let total = data.character_manager.get_all().len();
-    let alive = data.character_manager.get_all().iter().filter(|&c| c.is_alive()).count();
+    let alive = data
+        .character_manager
+        .get_all()
+        .iter()
+        .filter(|&c| c.is_alive())
+        .count();
+    let characters: Vec<(usize, &str)> = data
+        .character_manager
+        .get_all()
+        .iter()
+        .map(|c| (c.id().id(), c.name().name()))
+        .collect();
 
     Template::render(
         "characters",
         context! {
             alive: alive,
             total: total,
+            characters: characters,
         },
     )
 }
