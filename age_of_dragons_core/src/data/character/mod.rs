@@ -114,11 +114,14 @@ impl Character {
         self.death_date.is_some()
     }
 
-    pub fn calculate_age(&self, date: Date) -> Duration {
+    /// Calculates the current age of alive characters and the age they reached before dying otherwise.
+    pub fn calculate_age(&self, now: Date) -> Duration {
         if let Some(death_date) = self.death_date {
             death_date
+        } else if now < self.birth_date {
+            panic!("Failed to calculate age before birth!")
         } else {
-            date
+            now
         }
         .get_duration_since(self.birth_date)
     }
@@ -138,16 +141,34 @@ mod tests {
         assert_eq!(character.death_date(), None);
         assert!(character.is_alive());
         assert!(!character.is_dead());
+        assert_eq!(character.calculate_age(Date::new(20)), Duration::new(0));
+        assert_eq!(character.calculate_age(Date::new(21)), Duration::new(1));
+        assert_eq!(character.calculate_age(Date::new(22)), Duration::new(2));
     }
 
     #[test]
     fn test_dead_character() {
         let race = Race::simple(32, TwoGenders);
-        let date = Date::new(40);
+        let date = Date::new(45);
         let character = Character::new(0, "C0", &race, Female, Date::new(20), Some(date)).unwrap();
 
         assert_eq!(character.death_date(), Some(date));
         assert!(!character.is_alive());
         assert!(character.is_dead());
+
+        let age = Duration::new(25);
+
+        for year in 0..100 {
+            assert_eq!(character.calculate_age(Date::new(year)), age);
+        }
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_calculate_age_before_birth() {
+        let race = Race::simple(32, TwoGenders);
+        let character = Character::new(0, "C0", &race, Female, Date::new(20), None).unwrap();
+
+        character.calculate_age(Date::new(10));
     }
 }
