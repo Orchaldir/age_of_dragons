@@ -5,6 +5,7 @@ use crate::data::time::Duration;
 use anyhow::{bail, Context, Result};
 
 pub mod gender;
+pub mod manager;
 pub mod stage;
 
 /// The id of a [`Race`].
