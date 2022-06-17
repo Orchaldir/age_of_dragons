@@ -21,11 +21,25 @@ fn home(data: &State<SimulationData>) -> Template {
     )
 }
 
+#[get("/character")]
+fn characters(data: &State<SimulationData>) -> Template {
+    let total = data.character_manager.get_all().len();
+    let alive = data.character_manager.get_all().iter().filter(|&c| c.is_alive()).count();
+
+    Template::render(
+        "characters",
+        context! {
+            alive: alive,
+            total: total,
+        },
+    )
+}
+
 #[rocket::main]
 async fn main() -> Result<()> {
     if let Err(e) = rocket::build()
         .manage(init_simulation())
-        .mount("/", routes![home])
+        .mount("/", routes![home, characters])
         .attach(Template::fairing())
         .launch()
         .await

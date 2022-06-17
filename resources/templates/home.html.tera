@@ -3,6 +3,6 @@
 {% block content %}
     <p><h1>Age of Dragons</h1></p>
     <p><b>Races:</b> {{ races }}</p>
-    <p><b>Characters:</b> {{ characters }}</p>
+    <p><b>Characters:</b> <a href="/character">{{ characters }}</a></p>
     <p><b>Year:</b> {{ year }}</p>
 {% endblock content %}
