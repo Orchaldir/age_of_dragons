@@ -3,7 +3,7 @@
 {% block content %}
     <p><h1>{{ name }}</h1></p>
     <p><b>Id:</b> {{ id }}</p>
-    <p><b>Race:</b> {{ race }}</p>
+    <p><b>Race:</b> <a href="/race/{{ race_id }}">{{ race }}</a></p>
     <p><b>Gender:</b> {{ gender }}</p>
     <p><b>Birth Date:</b> {{ birth_date }}</p>
     <p><b>Age:</b> {{ age }}</p>

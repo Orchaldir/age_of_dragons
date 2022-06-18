@@ -2,6 +2,7 @@
 extern crate rocket;
 
 use crate::init::init_simulation;
+use age_of_dragons_core::data::character::race::RaceId;
 use age_of_dragons_core::data::character::CharacterId;
 use age_of_dragons_core::data::SimulationData;
 use anyhow::Result;
@@ -52,13 +53,19 @@ fn characters(data: &State<SimulationData>) -> Template {
 fn character(data: &State<SimulationData>, id: usize) -> Option<Template> {
     data.character_manager
         .get(CharacterId::new(id))
-        .map(|character| {
+        .and_then(|character| {
+            data.race_manager
+                .get(character.race_id())
+                .map(|race| (character, race))
+        })
+        .map(|(character, race)| {
             Template::render(
                 "character",
                 context! {
                     name: character.name().name(),
                     id: id,
-                    race: "dfcds",
+                    race: race.name().name(),
+                    race_id: race.id().id(),
                     gender: format!("{:?}", character.gender()),
                     birth_date: character.birth_date().year(),
                     age: character.calculate_age(data.date).year(),
@@ -85,11 +92,25 @@ fn races(data: &State<SimulationData>) -> Template {
     )
 }
 
+#[get("/race/<id>")]
+fn race(data: &State<SimulationData>, id: usize) -> Option<Template> {
+    data.race_manager.get(RaceId::new(id)).map(|race| {
+        Template::render(
+            "race",
+            context! {
+                name: race.name().name(),
+                id: id,
+                gender: format!("{:?}", race.gender_option()),
+            },
+        )
+    })
+}
+
 #[rocket::main]
 async fn main() -> Result<()> {
     if let Err(e) = rocket::build()
         .manage(init_simulation())
-        .mount("/", routes![home, characters, character, races])
+        .mount("/", routes![home, characters, character, races, race])
         .attach(Template::fairing())
         .launch()
         .await
