@@ -102,6 +102,10 @@ impl Character {
         self.race_id
     }
 
+    pub fn life_stage(&self) -> usize {
+        self.life_stage
+    }
+
     pub fn gender(&self) -> Gender {
         self.gender
     }

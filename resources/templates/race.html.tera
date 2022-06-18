@@ -5,5 +5,10 @@
     <p><b>Id:</b> {{ id }}</p>
     <p><b>Gender Option:</b> {{ gender }}</p>
     <p><b>Stages:</b></p>
+    <ul>
+    {% for s in stages %}
+      <li>{{ s }}</li>
+    {% endfor %}
+    </ul>
     <p><a href="/">Back</a></p>
 {% endblock content %}

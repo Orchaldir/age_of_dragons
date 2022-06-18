@@ -59,6 +59,7 @@ fn character(data: &State<SimulationData>, id: usize) -> Option<Template> {
                 .map(|race| (character, race))
         })
         .map(|(character, race)| {
+            let stage = race.stages()[character.life_stage()].name().to_str();
             Template::render(
                 "character",
                 context! {
@@ -66,6 +67,7 @@ fn character(data: &State<SimulationData>, id: usize) -> Option<Template> {
                     id: id,
                     race: race.name().to_str(),
                     race_id: race.id().id(),
+                    stage: stage,
                     gender: format!("{:?}", character.gender()),
                     birth_date: character.birth_date().year(),
                     age: character.calculate_age(data.date).year(),
@@ -95,12 +97,18 @@ fn races(data: &State<SimulationData>) -> Template {
 #[get("/race/<id>")]
 fn race(data: &State<SimulationData>, id: usize) -> Option<Template> {
     data.race_manager.get(RaceId::new(id)).map(|race| {
+        let stages: Vec<&str> = race
+            .stages()
+            .iter()
+            .map(|stage| stage.name().to_str())
+            .collect();
         Template::render(
             "race",
             context! {
                 name: race.name().to_str(),
                 id: id,
                 gender: format!("{:?}", race.gender_option()),
+                stages: stages,
             },
         )
     })
