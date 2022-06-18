@@ -1,0 +1,14 @@
+{% extends "base" %}
+
+{% block content %}
+    <p><h1>Characters</h1></p>
+    <p><b>Alive:</b> {{ alive }}</p>
+    <p><b>Dead:</b> {{ total - alive }}</p>
+    <p><b>Total:</b> {{ total }}</p>
+    <ul>
+    {% for c in characters %}
+      <li><a href="/character/{{ c.0 }}">{{ c.1 }}</a></li>
+    {% endfor %}
+    </ul>
+    <p><a href="/">Back</a></p>
+{% endblock content %}

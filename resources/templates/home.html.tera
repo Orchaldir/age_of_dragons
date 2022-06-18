@@ -1,0 +1,8 @@
+{% extends "base" %}
+
+{% block content %}
+    <p><h1>Age of Dragons</h1></p>
+    <p><b>Races:</b> <a href="/race">{{ races }}</a></p>
+    <p><b>Characters:</b> <a href="/character">{{ characters }}</a></p>
+    <p><b>Year:</b> {{ year }}</p>
+{% endblock content %}

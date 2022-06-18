@@ -5,6 +5,7 @@ use crate::data::time::{Date, Duration};
 use anyhow::{bail, Context, Result};
 
 pub mod gender;
+pub mod manager;
 pub mod race;
 
 /// The id of a [`Character`].
@@ -99,6 +100,10 @@ impl Character {
 
     pub fn race_id(&self) -> RaceId {
         self.race_id
+    }
+
+    pub fn life_stage(&self) -> usize {
+        self.life_stage
     }
 
     pub fn gender(&self) -> Gender {

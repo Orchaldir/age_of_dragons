@@ -1,0 +1,12 @@
+{% extends "base" %}
+
+{% block content %}
+    <p><h1>Races</h1></p>
+    <p><b>Total:</b> {{ number }}</p>
+    <ul>
+    {% for r in races %}
+      <li><a href="/race/{{ r.0 }}">{{ r.1 }}</a></li>
+    {% endfor %}
+    </ul>
+    <p><a href="/">Back</a></p>
+{% endblock content %}
