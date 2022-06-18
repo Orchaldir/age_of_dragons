@@ -9,7 +9,7 @@ impl Name {
     ///
     /// ```
     ///# use age_of_dragons_core::data::name::Name;
-    /// assert_eq!(Name::new("Test").unwrap().name(), "Test");
+    /// assert_eq!(Name::new("Test").unwrap().to_str(), "Test");
     /// assert!(Name::new("").is_err());
     /// assert!(Name::new("   ").is_err());
     /// ```
@@ -18,7 +18,7 @@ impl Name {
     ///
     /// ```
     ///# use age_of_dragons_core::data::name::Name;
-    /// assert_eq!(Name::new(" Test ").unwrap().name(), "Test");
+    /// assert_eq!(Name::new(" Test ").unwrap().to_str(), "Test");
     /// ```
     pub fn new<S: Into<String>>(name: S) -> Result<Self> {
         let name = name.into();
@@ -31,7 +31,7 @@ impl Name {
         Ok(Self(trimmed.to_string()))
     }
 
-    pub fn name(&self) -> &str {
+    pub fn to_str(&self) -> &str {
         &self.0
     }
 }

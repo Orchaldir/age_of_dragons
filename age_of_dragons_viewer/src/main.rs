@@ -36,7 +36,7 @@ fn characters(data: &State<SimulationData>) -> Template {
         .character_manager
         .get_all()
         .iter()
-        .map(|c| (c.id().id(), c.name().name()))
+        .map(|c| (c.id().id(), c.name().to_str()))
         .collect();
 
     Template::render(
@@ -62,9 +62,9 @@ fn character(data: &State<SimulationData>, id: usize) -> Option<Template> {
             Template::render(
                 "character",
                 context! {
-                    name: character.name().name(),
+                    name: character.name().to_str(),
                     id: id,
-                    race: race.name().name(),
+                    race: race.name().to_str(),
                     race_id: race.id().id(),
                     gender: format!("{:?}", character.gender()),
                     birth_date: character.birth_date().year(),
@@ -80,7 +80,7 @@ fn races(data: &State<SimulationData>) -> Template {
         .race_manager
         .get_all()
         .iter()
-        .map(|c| (c.id().id(), c.name().name()))
+        .map(|c| (c.id().id(), c.name().to_str()))
         .collect();
 
     Template::render(
@@ -98,7 +98,7 @@ fn race(data: &State<SimulationData>, id: usize) -> Option<Template> {
         Template::render(
             "race",
             context! {
-                name: race.name().name(),
+                name: race.name().to_str(),
                 id: id,
                 gender: format!("{:?}", race.gender_option()),
             },
