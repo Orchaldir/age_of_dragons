@@ -67,11 +67,29 @@ fn character(data: &State<SimulationData>, id: usize) -> Option<Template> {
         })
 }
 
+#[get("/race")]
+fn races(data: &State<SimulationData>) -> Template {
+    let races: Vec<(usize, &str)> = data
+        .race_manager
+        .get_all()
+        .iter()
+        .map(|c| (c.id().id(), c.name().name()))
+        .collect();
+
+    Template::render(
+        "races",
+        context! {
+            number: races.len(),
+            races: races,
+        },
+    )
+}
+
 #[rocket::main]
 async fn main() -> Result<()> {
     if let Err(e) = rocket::build()
         .manage(init_simulation())
-        .mount("/", routes![home, characters, character])
+        .mount("/", routes![home, characters, character, races])
         .attach(Template::fairing())
         .launch()
         .await
