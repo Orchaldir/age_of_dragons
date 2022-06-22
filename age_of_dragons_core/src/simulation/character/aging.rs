@@ -17,14 +17,17 @@ fn calculate_aging(data: &SimulationData) -> Vec<(CharacterId, usize)> {
                 .get(character.race_id())
                 .expect("Character's race is unknown!");
 
-            if let Some(stage) = race.stages().get(character.life_stage()) {
-                if let Some(max_age) = stage.max_age() {
-                    let age = character.calculate_age(data.date);
+            let stage = race
+                .stages()
+                .get(character.life_stage())
+                .expect("Character's life stage is unknown!");
 
-                    if age > *max_age {
-                        let new_life_stage = character.life_stage() + 1;
-                        return Some((character.id(), new_life_stage));
-                    }
+            if let Some(max_age) = stage.max_age() {
+                let age = character.calculate_age(data.date);
+
+                if age > *max_age {
+                    let new_life_stage = character.life_stage() + 1;
+                    return Some((character.id(), new_life_stage));
                 }
             }
 
