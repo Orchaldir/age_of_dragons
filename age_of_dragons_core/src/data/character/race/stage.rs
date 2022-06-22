@@ -14,6 +14,10 @@ impl LifeStageId {
     pub fn index(&self) -> usize {
         self.0
     }
+
+    pub fn next(&self) -> Self {
+        Self::new(self.0 + 1)
+    }
 }
 
 /// Members of most [`Races`](crate::data::character::race::Race) go through multiple life stages while growing up.

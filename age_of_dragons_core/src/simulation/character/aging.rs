@@ -39,14 +39,13 @@ fn calculate_aging_effect(data: &SimulationData, character: &Character) -> Optio
         let age = character.calculate_age(data.date);
 
         if age > *max_age {
-            let new_life_stage = character.life_stage().index() + 1;
-            let is_last_stage = new_life_stage == race.stages().len();
+            let new_life_stage = character.life_stage().next();
+            let is_last_stage = new_life_stage.index() == race.stages().len();
 
             return if is_last_stage {
                 Some(AgingEffect::Death(character.id()))
             } else {
-                let new_id = LifeStageId::new(new_life_stage);
-                Some(AgingEffect::ChangeLifeStage(character.id(), new_id))
+                Some(AgingEffect::ChangeLifeStage(character.id(), new_life_stage))
             };
         }
     }
