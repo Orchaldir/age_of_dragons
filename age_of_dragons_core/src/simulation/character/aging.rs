@@ -4,29 +4,31 @@ use crate::data::SimulationData;
 /// Calculates which [`Character`](crate::data::character::Character) are old enough to change to
 /// the next [`LifeStage`](crate::data::character::race::stage::LifeStage).
 fn calculate_aging(data: &SimulationData) -> Vec<(CharacterId, usize)> {
-    let mut aging = Vec::new();
+    data.character_manager
+        .get_all()
+        .iter()
+        .filter_map(|character| {
+            if character.is_dead() {
+                return None;
+            }
 
-    for character in data.character_manager.get_all() {
-        if character.is_dead() {
-            continue;
-        }
+            let race = data
+                .race_manager
+                .get(character.race_id())
+                .expect("Character's race is unknown!");
 
-        let race = data
-            .race_manager
-            .get(character.race_id())
-            .expect("Characters race is unknown!");
+            if let Some(stage) = race.stages().get(character.life_stage()) {
+                if let Some(max_age) = stage.max_age() {
+                    let age = character.calculate_age(data.date);
 
-        if let Some(stage) = race.stages().get(character.life_stage()) {
-            if let Some(max_age) = stage.max_age() {
-                let age = character.calculate_age(data.date);
-
-                if age > *max_age {
-                    let new_life_stage = character.life_stage() + 1;
-                    aging.push((character.id(), new_life_stage));
+                    if age > *max_age {
+                        let new_life_stage = character.life_stage() + 1;
+                        return Some((character.id(), new_life_stage));
+                    }
                 }
             }
-        }
-    }
 
-    aging
+            None
+        })
+        .collect()
 }
