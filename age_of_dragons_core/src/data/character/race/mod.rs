@@ -68,7 +68,7 @@ impl Race {
                 );
             }
 
-            if i != stage.index() {
+            if i != stage.id().index() {
                 bail!("Race {}'s life stage {} has wrong index!", name, i);
             }
 

@@ -1,10 +1,11 @@
+use crate::data::character::race::stage::LifeStageId;
 use crate::data::character::{Character, CharacterId};
 use crate::data::SimulationData;
 
 enum AgingEffect {
     /// The [`Characters`](crate::data::character::Character) is old enough for
     /// the next [`LifeStage`](crate::data::character::race::stage::LifeStage).
-    ChangeLifeStage(CharacterId, usize),
+    ChangeLifeStage(CharacterId, LifeStageId),
     /// The [`Characters`](crate::data::character::Character) is old enough to die from old age.
     Death(CharacterId),
 }
@@ -31,20 +32,21 @@ fn calculate_aging_effect(data: &SimulationData, character: &Character) -> Optio
 
     let stage = race
         .stages()
-        .get(character.life_stage())
+        .get(character.life_stage().index())
         .expect("Character's life stage is unknown!");
 
     if let Some(max_age) = stage.max_age() {
         let age = character.calculate_age(data.date);
 
         if age > *max_age {
-            let new_life_stage = character.life_stage() + 1;
+            let new_life_stage = character.life_stage().index() + 1;
             let is_last_stage = new_life_stage == race.stages().len();
 
             return if is_last_stage {
                 Some(AgingEffect::Death(character.id()))
             } else {
-                Some(AgingEffect::ChangeLifeStage(character.id(), new_life_stage))
+                let new_id = LifeStageId::new(new_life_stage);
+                Some(AgingEffect::ChangeLifeStage(character.id(), new_id))
             };
         }
     }

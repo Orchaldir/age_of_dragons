@@ -76,7 +76,9 @@ fn character(data: &State<ViewerData>, id: usize) -> Option<Template> {
                 .map(|race| (character, race))
         })
         .map(|(character, race)| {
-            let stage = race.stages()[character.life_stage()].name().to_str();
+            let stage = race.stages()[character.life_stage().index()]
+                .name()
+                .to_str();
             Template::render(
                 "character",
                 context! {

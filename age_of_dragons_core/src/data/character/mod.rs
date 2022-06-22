@@ -1,4 +1,5 @@
 use crate::data::character::gender::Gender;
+use crate::data::character::race::stage::LifeStageId;
 use crate::data::character::race::{Race, RaceId};
 use crate::data::name::Name;
 use crate::data::time::{Date, Duration};
@@ -28,7 +29,7 @@ pub struct Character {
     id: CharacterId,
     name: Name,
     race_id: RaceId,
-    life_stage: usize,
+    life_stage: LifeStageId,
     gender: Gender,
     birth_date: Date,
     /// The death date is only available, if the character is death.
@@ -84,7 +85,7 @@ impl Character {
             name,
             gender,
             race_id: race.id(),
-            life_stage: 0,
+            life_stage: LifeStageId::new(0),
             birth_date,
             death_date,
         })
@@ -102,7 +103,7 @@ impl Character {
         self.race_id
     }
 
-    pub fn life_stage(&self) -> usize {
+    pub fn life_stage(&self) -> LifeStageId {
         self.life_stage
     }
 
