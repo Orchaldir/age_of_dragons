@@ -2,7 +2,10 @@
 
 {% block content %}
     <p><h1>Age of Dragons</h1></p>
+    <h2>Overview</h2>
     <p><b>Races:</b> <a href="/race">{{ races }}</a></p>
     <p><b>Characters:</b> <a href="/character">{{ characters }}</a></p>
     <p><b>Year:</b> {{ year }}</p>
+    <h2>Actions</h2>
+    <p><a href="/simulate">Simulate</a></p>
 {% endblock content %}

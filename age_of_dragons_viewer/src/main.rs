@@ -5,14 +5,22 @@ use crate::init::init_simulation;
 use age_of_dragons_core::data::character::race::RaceId;
 use age_of_dragons_core::data::character::CharacterId;
 use age_of_dragons_core::data::SimulationData;
+use age_of_dragons_core::simulation::simulate_year;
 use anyhow::Result;
+use rocket::response::Redirect;
 use rocket::{routes, State};
 use rocket_dyn_templates::{context, Template};
+use std::sync::Mutex;
 
 pub mod init;
 
+struct ViewerData {
+    data: Mutex<SimulationData>,
+}
+
 #[get("/")]
-fn home(data: &State<SimulationData>) -> Template {
+fn home(data: &State<ViewerData>) -> Template {
+    let data = data.data.lock().expect("lock shared data");
     Template::render(
         "home",
         context! {
@@ -23,8 +31,16 @@ fn home(data: &State<SimulationData>) -> Template {
     )
 }
 
+#[get("/simulate")]
+fn simulate(data: &State<ViewerData>) -> Redirect {
+    let mut data = data.data.lock().expect("lock shared data");
+    simulate_year(&mut data);
+    Redirect::to(uri!(home()))
+}
+
 #[get("/character")]
-fn characters(data: &State<SimulationData>) -> Template {
+fn characters(data: &State<ViewerData>) -> Template {
+    let data = data.data.lock().expect("lock shared data");
     let total = data.character_manager.get_all().len();
     let alive = data
         .character_manager
@@ -50,7 +66,8 @@ fn characters(data: &State<SimulationData>) -> Template {
 }
 
 #[get("/character/<id>")]
-fn character(data: &State<SimulationData>, id: usize) -> Option<Template> {
+fn character(data: &State<ViewerData>, id: usize) -> Option<Template> {
+    let data = data.data.lock().expect("lock shared data");
     data.character_manager
         .get(CharacterId::new(id))
         .and_then(|character| {
@@ -59,7 +76,9 @@ fn character(data: &State<SimulationData>, id: usize) -> Option<Template> {
                 .map(|race| (character, race))
         })
         .map(|(character, race)| {
-            let stage = race.stages()[character.life_stage()].name().to_str();
+            let stage = race.stages()[character.life_stage().index()]
+                .name()
+                .to_str();
             Template::render(
                 "character",
                 context! {
@@ -77,7 +96,8 @@ fn character(data: &State<SimulationData>, id: usize) -> Option<Template> {
 }
 
 #[get("/race")]
-fn races(data: &State<SimulationData>) -> Template {
+fn races(data: &State<ViewerData>) -> Template {
+    let data = data.data.lock().expect("lock shared data");
     let races: Vec<(usize, &str)> = data
         .race_manager
         .get_all()
@@ -95,7 +115,8 @@ fn races(data: &State<SimulationData>) -> Template {
 }
 
 #[get("/race/<id>")]
-fn race(data: &State<SimulationData>, id: usize) -> Option<Template> {
+fn race(data: &State<ViewerData>, id: usize) -> Option<Template> {
+    let data = data.data.lock().expect("lock shared data");
     data.race_manager.get(RaceId::new(id)).map(|race| {
         let stages: Vec<&str> = race
             .stages()
@@ -117,8 +138,13 @@ fn race(data: &State<SimulationData>, id: usize) -> Option<Template> {
 #[rocket::main]
 async fn main() -> Result<()> {
     if let Err(e) = rocket::build()
-        .manage(init_simulation())
-        .mount("/", routes![home, characters, character, races, race])
+        .manage(ViewerData {
+            data: Mutex::new(init_simulation()),
+        })
+        .mount(
+            "/",
+            routes![home, simulate, characters, character, races, race],
+        )
         .attach(Template::fairing())
         .launch()
         .await

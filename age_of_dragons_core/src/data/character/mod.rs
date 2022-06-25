@@ -1,4 +1,5 @@
 use crate::data::character::gender::Gender;
+use crate::data::character::race::stage::LifeStageId;
 use crate::data::character::race::{Race, RaceId};
 use crate::data::name::Name;
 use crate::data::time::{Date, Duration};
@@ -28,7 +29,7 @@ pub struct Character {
     id: CharacterId,
     name: Name,
     race_id: RaceId,
-    life_stage: usize,
+    life_stage: LifeStageId,
     gender: Gender,
     birth_date: Date,
     /// The death date is only available, if the character is death.
@@ -84,10 +85,29 @@ impl Character {
             name,
             gender,
             race_id: race.id(),
-            life_stage: 0,
+            life_stage: LifeStageId::new(0),
             birth_date,
             death_date,
         })
+    }
+
+    /// A simple way to create a character for testing.
+    pub fn simple(
+        id: usize,
+        race_id: RaceId,
+        gender: Gender,
+        birth_date: Date,
+        death_date: Option<Date>,
+    ) -> Self {
+        Self {
+            id: CharacterId::new(id),
+            name: Name::new(format!("Chacarer {}", id)).unwrap(),
+            gender,
+            race_id,
+            life_stage: LifeStageId::new(0),
+            birth_date,
+            death_date,
+        }
     }
 
     pub fn id(&self) -> CharacterId {
@@ -102,8 +122,12 @@ impl Character {
         self.race_id
     }
 
-    pub fn life_stage(&self) -> usize {
+    pub fn life_stage(&self) -> LifeStageId {
         self.life_stage
+    }
+
+    pub fn set_life_stage(&mut self, life_stage: LifeStageId) {
+        self.life_stage = life_stage;
     }
 
     pub fn gender(&self) -> Gender {
@@ -118,6 +142,10 @@ impl Character {
         self.death_date
     }
 
+    pub fn set_death_date(&mut self, date: Date) {
+        self.death_date = Some(date);
+    }
+
     pub fn is_alive(&self) -> bool {
         self.death_date.is_none()
     }
@@ -126,7 +154,7 @@ impl Character {
         self.death_date.is_some()
     }
 
-    /// Calculates the current age of alive characters and the age they reached before dying otherwise.
+    /// Calculates the current age of an alive character or the age they reached before dying otherwise.
     pub fn calculate_age(&self, now: Date) -> Duration {
         if let Some(death_date) = self.death_date {
             death_date
