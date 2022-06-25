@@ -155,7 +155,13 @@ mod tests {
         }
     }
 
-    fn assert_aging(data: &SimulationData, id: CharacterId, age: u32, is_alive: bool, life_stage: usize) {
+    fn assert_aging(
+        data: &SimulationData,
+        id: CharacterId,
+        age: u32,
+        is_alive: bool,
+        life_stage: usize,
+    ) {
         let character = data.character_manager.get(id).unwrap();
         assert_eq!(character.calculate_age(data.date), Duration::new(age));
         assert_eq!(character.is_alive(), is_alive);
