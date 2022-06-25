@@ -79,14 +79,14 @@ fn calculate_aging_effect(data: &SimulationData, character: &Character) -> Optio
 mod tests {
     use super::*;
     use crate::data::character::gender::Gender::Female;
-    use crate::data::character::race::tests::create_mortal;
+    use crate::data::character::race::tests::{create_immortal_race, create_mortal_race};
 
     #[test]
     fn test_mortal_race() {
         let mut data = SimulationData::default();
         let race_id = data
             .race_manager
-            .create(|id| create_mortal(id, 1, 3))
+            .create(|id| create_mortal_race(id, 1, 3))
             .unwrap();
         let id = data
             .create_character(|id, date| {
@@ -117,6 +117,26 @@ mod tests {
         simulate_aging(&mut data);
 
         assert_aging(&mut data, id, false, 1);
+    }
+
+    #[test]
+    fn test_immortal_race() {
+        let mut data = SimulationData::default();
+        let race_id = data
+            .race_manager
+            .create(|id| create_immortal_race(id))
+            .unwrap();
+        let id = data
+            .create_character(|id, date| {
+                Ok(Character::simple(id.id(), race_id, Female, date, None))
+            })
+            .unwrap();
+
+        for _i in 0..100 {
+            simulate_aging(&mut data);
+
+            assert_aging(&mut data, id, true, 0);
+        }
     }
 
     fn assert_aging(data: &SimulationData, id: CharacterId, is_alive: bool, life_stage: usize) {

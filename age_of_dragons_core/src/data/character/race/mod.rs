@@ -147,6 +147,7 @@ impl Race {
 #[cfg(test)]
 pub mod tests {
     use super::*;
+    use crate::data::character::race::gender::GenderOption::NoGender;
     use GenderOption::TwoGenders;
 
     #[test]
@@ -193,10 +194,16 @@ pub mod tests {
         assert!(Race::new(0, "Test", TwoGenders, vec![stage0, stage1]).is_err());
     }
 
-    pub fn create_mortal(id: RaceId, age0: u32, age1: u32) -> Result<Race> {
+    pub fn create_mortal_race(id: RaceId, age0: u32, age1: u32) -> Result<Race> {
         let stage0 = LifeStage::new("Child", 0, Some(Duration::new(age0))).unwrap();
         let stage1 = LifeStage::new("Adult", 1, Some(Duration::new(age1))).unwrap();
         let stages = vec![stage0, stage1];
         Race::new(id.id(), "Mortal Race", TwoGenders, stages)
+    }
+
+    pub fn create_immortal_race(id: RaceId) -> Result<Race> {
+        let stage = LifeStage::new("Immortal", 0, None).unwrap();
+        let stages = vec![stage];
+        Race::new(id.id(), "Immortal Race", NoGender, stages)
     }
 }
