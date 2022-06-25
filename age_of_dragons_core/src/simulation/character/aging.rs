@@ -79,11 +79,7 @@ fn calculate_aging_effect(data: &SimulationData, character: &Character) -> Optio
 mod tests {
     use super::*;
     use crate::data::character::gender::Gender::Female;
-    use crate::data::character::race::gender::GenderOption;
-    use crate::data::character::race::stage::LifeStage;
-    use crate::data::character::race::{Race, RaceId};
-    use crate::data::time::Duration;
-    use anyhow::Result;
+    use crate::data::character::race::tests::create_mortal;
 
     #[test]
     fn test_mortal_race() {
@@ -127,12 +123,5 @@ mod tests {
         let character = data.character_manager.get(id).unwrap();
         assert_eq!(character.is_alive(), is_alive);
         assert_eq!(character.life_stage(), LifeStageId::new(life_stage));
-    }
-
-    fn create_mortal(id: RaceId, age0: u32, age1: u32) -> Result<Race> {
-        let stage0 = LifeStage::new("Child", 0, Some(Duration::new(age0))).unwrap();
-        let stage1 = LifeStage::new("Adult", 1, Some(Duration::new(age1))).unwrap();
-        let stages = vec![stage0, stage1];
-        Race::new(id.id(), "Mortal Race", GenderOption::TwoGenders, stages)
     }
 }

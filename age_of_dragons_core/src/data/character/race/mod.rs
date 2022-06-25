@@ -145,7 +145,7 @@ impl Race {
 }
 
 #[cfg(test)]
-mod tests {
+pub mod tests {
     use super::*;
     use GenderOption::TwoGenders;
 
@@ -191,5 +191,12 @@ mod tests {
         let stage1 = LifeStage::new("LF1", 0, None).unwrap();
 
         assert!(Race::new(0, "Test", TwoGenders, vec![stage0, stage1]).is_err());
+    }
+
+    pub fn create_mortal(id: RaceId, age0: u32, age1: u32) -> Result<Race> {
+        let stage0 = LifeStage::new("Child", 0, Some(Duration::new(age0))).unwrap();
+        let stage1 = LifeStage::new("Adult", 1, Some(Duration::new(age1))).unwrap();
+        let stages = vec![stage0, stage1];
+        Race::new(id.id(), "Mortal Race", TwoGenders, stages)
     }
 }
