@@ -88,7 +88,10 @@ mod tests {
     #[test]
     fn test_mortal_race() {
         let mut data = SimulationData::default();
-        let race_id = data.race_manager.create(create_mortal).unwrap();
+        let race_id = data
+            .race_manager
+            .create(|id| create_mortal(id, 1, 3))
+            .unwrap();
         let race = data.race_manager.get(race_id).unwrap();
         let id = data
             .character_manager
@@ -98,6 +101,26 @@ mod tests {
         simulate_aging(&mut data);
 
         assert_aging(&mut data, id, true, 0);
+
+        data.date.increase_year();
+        simulate_aging(&mut data);
+
+        assert_aging(&mut data, id, true, 0);
+
+        data.date.increase_year();
+        simulate_aging(&mut data);
+
+        assert_aging(&mut data, id, true, 1);
+
+        data.date.increase_year();
+        simulate_aging(&mut data);
+
+        assert_aging(&mut data, id, true, 1);
+
+        data.date.increase_year();
+        simulate_aging(&mut data);
+
+        assert_aging(&mut data, id, false, 1);
     }
 
     fn assert_aging(data: &SimulationData, id: CharacterId, is_alive: bool, life_stage: usize) {
@@ -106,9 +129,9 @@ mod tests {
         assert_eq!(character.life_stage(), LifeStageId::new(life_stage));
     }
 
-    fn create_mortal(id: RaceId) -> Result<Race> {
-        let stage0 = LifeStage::new("Child", 0, Some(Duration::new(4))).unwrap();
-        let stage1 = LifeStage::new("Adult", 1, Some(Duration::new(9))).unwrap();
+    fn create_mortal(id: RaceId, age0: u32, age1: u32) -> Result<Race> {
+        let stage0 = LifeStage::new("Child", 0, Some(Duration::new(age0))).unwrap();
+        let stage1 = LifeStage::new("Adult", 1, Some(Duration::new(age1))).unwrap();
         let stages = vec![stage0, stage1];
         Race::new(id.id(), "Mortal Race", GenderOption::TwoGenders, stages)
     }
