@@ -80,6 +80,7 @@ mod tests {
     use super::*;
     use crate::data::character::gender::Gender::Female;
     use crate::data::character::race::tests::{create_immortal_race, create_mortal_race};
+    use crate::data::time::Duration;
 
     #[test]
     fn test_mortal_race() {
@@ -96,31 +97,44 @@ mod tests {
 
         simulate_aging(&mut data);
 
-        assert_aging(&mut data, id, true, 0);
+        // 1.life stage
+
+        assert_aging(&data, id, 0, true, 0);
 
         data.date.increase_year();
         simulate_aging(&mut data);
 
-        assert_aging(&mut data, id, true, 0);
+        assert_aging(&data, id, 1, true, 0);
+
+        // 2.life stage
 
         data.date.increase_year();
         simulate_aging(&mut data);
 
-        assert_aging(&mut data, id, true, 1);
+        assert_aging(&data, id, 2, true, 1);
 
         data.date.increase_year();
         simulate_aging(&mut data);
 
-        assert_aging(&mut data, id, true, 1);
+        assert_aging(&data, id, 3, true, 1);
+
+        // character died
 
         data.date.increase_year();
         simulate_aging(&mut data);
 
-        assert_aging(&mut data, id, false, 1);
+        assert_aging(&data, id, 4, false, 1);
+
+        // dead characters don't age
+
+        data.date.increase_year();
+        simulate_aging(&mut data);
+
+        assert_aging(&data, id, 4, false, 1);
     }
 
     #[test]
-    fn test_immortal_race() {
+    fn test_immortal_race_never_dies() {
         let mut data = SimulationData::default();
         let race_id = data
             .race_manager
@@ -132,15 +146,18 @@ mod tests {
             })
             .unwrap();
 
-        for _i in 0..100 {
+        for i in 0..100 {
             simulate_aging(&mut data);
 
-            assert_aging(&mut data, id, true, 0);
+            assert_aging(&data, id, i, true, 0);
+
+            data.date.increase_year();
         }
     }
 
-    fn assert_aging(data: &SimulationData, id: CharacterId, is_alive: bool, life_stage: usize) {
+    fn assert_aging(data: &SimulationData, id: CharacterId, age: u32, is_alive: bool, life_stage: usize) {
         let character = data.character_manager.get(id).unwrap();
+        assert_eq!(character.calculate_age(data.date), Duration::new(age));
         assert_eq!(character.is_alive(), is_alive);
         assert_eq!(character.life_stage(), LifeStageId::new(life_stage));
     }
