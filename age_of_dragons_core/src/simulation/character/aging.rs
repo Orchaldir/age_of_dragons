@@ -2,6 +2,7 @@ use crate::data::character::race::stage::LifeStageId;
 use crate::data::character::{Character, CharacterId};
 use crate::data::SimulationData;
 
+/// Simulates the aging of [`Characters`](Character). They can grow up and die of old age.
 pub fn simulate_aging(data: &mut SimulationData) {
     for effect in calculate_aging_effects(data) {
         match effect {
@@ -24,14 +25,14 @@ pub fn simulate_aging(data: &mut SimulationData) {
 }
 
 enum AgingEffect {
-    /// The [`Characters`](crate::data::character::Character) is old enough for
+    /// The [`Characters`](Character) is old enough for
     /// the next [`LifeStage`](crate::data::character::race::stage::LifeStage).
     ChangeLifeStage(CharacterId, LifeStageId),
     /// The [`Characters`](crate::data::character::Character) is old enough to die from old age.
     Death(CharacterId),
 }
 
-/// Calculates which [`Characters`](crate::data::character::Character) are effected by aging.
+/// Calculates which [`Characters`](Character) are effected by aging.
 fn calculate_aging_effects(data: &SimulationData) -> Vec<AgingEffect> {
     data.character_manager
         .get_all()
@@ -40,7 +41,7 @@ fn calculate_aging_effects(data: &SimulationData) -> Vec<AgingEffect> {
         .collect()
 }
 
-/// Calculates if a [`Character`](crate::data::character::Character) is effected by aging.
+/// Calculates if a [`Character`] is effected by aging.
 fn calculate_aging_effect(data: &SimulationData, character: &Character) -> Option<AgingEffect> {
     if character.is_dead() {
         return None;
@@ -72,4 +73,43 @@ fn calculate_aging_effect(data: &SimulationData, character: &Character) -> Optio
     }
 
     None
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::data::character::gender::Gender::Female;
+    use crate::data::character::race::gender::GenderOption;
+    use crate::data::character::race::stage::LifeStage;
+    use crate::data::character::race::{Race, RaceId};
+    use crate::data::time::{Date, Duration};
+    use anyhow::Result;
+
+    #[test]
+    fn test_mortal_race() {
+        let mut data = SimulationData::default();
+        let race_id = data.race_manager.create(create_mortal).unwrap();
+        let race = data.race_manager.get(race_id).unwrap();
+        let id = data
+            .character_manager
+            .create(|id| Character::new(id.id(), "Test", race, Female, Date::new(0), None))
+            .unwrap();
+
+        simulate_aging(&mut data);
+
+        assert_aging(&mut data, id, true, 0);
+    }
+
+    fn assert_aging(data: &SimulationData, id: CharacterId, is_alive: bool, life_stage: usize) {
+        let character = data.character_manager.get(id).unwrap();
+        assert_eq!(character.is_alive(), is_alive);
+        assert_eq!(character.life_stage(), LifeStageId::new(life_stage));
+    }
+
+    fn create_mortal(id: RaceId) -> Result<Race> {
+        let stage0 = LifeStage::new("Child", 0, Some(Duration::new(4))).unwrap();
+        let stage1 = LifeStage::new("Adult", 1, Some(Duration::new(9))).unwrap();
+        let stages = vec![stage0, stage1];
+        Race::new(id.id(), "Mortal Race", GenderOption::TwoGenders, stages)
+    }
 }

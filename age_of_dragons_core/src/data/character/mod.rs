@@ -135,7 +135,7 @@ impl Character {
         self.death_date.is_some()
     }
 
-    /// Calculates the current age of alive characters and the age they reached before dying otherwise.
+    /// Calculates the current age of an alive character or the age they reached before dying otherwise.
     pub fn calculate_age(&self, now: Date) -> Duration {
         if let Some(death_date) = self.death_date {
             death_date
