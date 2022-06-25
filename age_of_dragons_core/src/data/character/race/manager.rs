@@ -25,8 +25,4 @@ impl RaceMgr {
     pub fn get(&self, id: RaceId) -> Option<&Race> {
         self.races.get(id.0)
     }
-
-    pub fn get_mut(&mut self, id: RaceId) -> Option<&mut Race> {
-        self.races.get_mut(id.0)
-    }
 }

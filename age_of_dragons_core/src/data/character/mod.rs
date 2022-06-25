@@ -107,6 +107,10 @@ impl Character {
         self.life_stage
     }
 
+    pub fn set_life_stage(&mut self, life_stage: LifeStageId) {
+        self.life_stage = life_stage;
+    }
+
     pub fn gender(&self) -> Gender {
         self.gender
     }
@@ -117,6 +121,10 @@ impl Character {
 
     pub fn death_date(&self) -> Option<Date> {
         self.death_date
+    }
+
+    pub fn set_death_date(&mut self, date: Date) {
+        self.death_date = Some(date);
     }
 
     pub fn is_alive(&self) -> bool {

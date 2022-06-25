@@ -2,6 +2,27 @@ use crate::data::character::race::stage::LifeStageId;
 use crate::data::character::{Character, CharacterId};
 use crate::data::SimulationData;
 
+pub fn simulate_aging(data: &mut SimulationData) {
+    for effect in calculate_aging_effects(data) {
+        match effect {
+            AgingEffect::ChangeLifeStage(id, stage) => {
+                let character = data
+                    .character_manager
+                    .get_mut(id)
+                    .expect("Character growing up doesn't exist!");
+                character.set_life_stage(stage);
+            }
+            AgingEffect::Death(id) => {
+                let character = data
+                    .character_manager
+                    .get_mut(id)
+                    .expect("Character dying from old age doesn't exist!");
+                character.set_death_date(data.date);
+            }
+        }
+    }
+}
+
 enum AgingEffect {
     /// The [`Characters`](crate::data::character::Character) is old enough for
     /// the next [`LifeStage`](crate::data::character::race::stage::LifeStage).
