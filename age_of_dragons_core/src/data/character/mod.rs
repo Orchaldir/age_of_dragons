@@ -91,6 +91,25 @@ impl Character {
         })
     }
 
+    /// A simple way to create a character for testing.
+    pub fn simple(
+        id: usize,
+        race_id: RaceId,
+        gender: Gender,
+        birth_date: Date,
+        death_date: Option<Date>,
+    ) -> Self {
+        Self {
+            id: CharacterId::new(id),
+            name: Name::new(format!("Chacarer {}", id)).unwrap(),
+            gender,
+            race_id,
+            life_stage: LifeStageId::new(0),
+            birth_date,
+            death_date,
+        }
+    }
+
     pub fn id(&self) -> CharacterId {
         self.id
     }

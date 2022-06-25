@@ -92,10 +92,17 @@ mod tests {
             .race_manager
             .create(|id| create_mortal(id, 1, 3))
             .unwrap();
-        let race = data.race_manager.get(race_id).unwrap();
         let id = data
             .character_manager
-            .create(|id| Character::new(id.id(), "Test", race, Female, Date::new(0), None))
+            .create(|id| {
+                Ok(Character::simple(
+                    id.id(),
+                    race_id,
+                    Female,
+                    Date::new(0),
+                    None,
+                ))
+            })
             .unwrap();
 
         simulate_aging(&mut data);
