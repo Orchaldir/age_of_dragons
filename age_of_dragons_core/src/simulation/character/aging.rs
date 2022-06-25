@@ -82,7 +82,7 @@ mod tests {
     use crate::data::character::race::gender::GenderOption;
     use crate::data::character::race::stage::LifeStage;
     use crate::data::character::race::{Race, RaceId};
-    use crate::data::time::{Date, Duration};
+    use crate::data::time::Duration;
     use anyhow::Result;
 
     #[test]
@@ -93,15 +93,8 @@ mod tests {
             .create(|id| create_mortal(id, 1, 3))
             .unwrap();
         let id = data
-            .character_manager
-            .create(|id| {
-                Ok(Character::simple(
-                    id.id(),
-                    race_id,
-                    Female,
-                    Date::new(0),
-                    None,
-                ))
+            .create_character(|id, date| {
+                Ok(Character::simple(id.id(), race_id, Female, date, None))
             })
             .unwrap();
 
