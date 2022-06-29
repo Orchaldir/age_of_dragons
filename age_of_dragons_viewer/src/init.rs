@@ -31,11 +31,11 @@ fn init_races() -> RaceMgr {
 }
 
 fn init_dragon(id: RaceId) -> Result<Race> {
-    let stage0 = LifeStage::new("Wyrmling", 0, Some(Duration::new(4))).unwrap();
-    let stage1 = LifeStage::new("Young", 1, Some(Duration::new(99))).unwrap();
-    let stage2 = LifeStage::new("Adult", 2, Some(Duration::new(799))).unwrap();
-    let stage3 = LifeStage::new("Ancient", 3, Some(Duration::new(999))).unwrap();
-    let stage4 = LifeStage::new("Wyrm", 4, None).unwrap();
+    let stage0 = LifeStage::new("Wyrmling", 0, Some(Duration::new(4)), None).unwrap();
+    let stage1 = LifeStage::new("Young", 1, Some(Duration::new(99)), None).unwrap();
+    let stage2 = LifeStage::new("Adult", 2, Some(Duration::new(799)), None).unwrap();
+    let stage3 = LifeStage::new("Ancient", 3, Some(Duration::new(999)), None).unwrap();
+    let stage4 = LifeStage::new("Wyrm", 4, None, None).unwrap();
     let stages = vec![stage0, stage1, stage2, stage3, stage4];
     Race::new(id.id(), "Dragon", GenderOption::TwoGenders, stages)
 }
