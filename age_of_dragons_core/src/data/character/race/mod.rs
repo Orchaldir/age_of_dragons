@@ -6,6 +6,7 @@ use anyhow::{bail, Context, Result};
 
 pub mod gender;
 pub mod manager;
+pub mod reproduction;
 pub mod stage;
 
 /// The id of a [`Race`].
