@@ -6,6 +6,7 @@ use anyhow::Result;
 
 pub mod character;
 pub mod name;
+pub mod probability;
 pub mod time;
 
 #[derive(Default, Debug)]
