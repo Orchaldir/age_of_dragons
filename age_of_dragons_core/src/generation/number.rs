@@ -1,18 +1,11 @@
 use std::collections::hash_map::DefaultHasher;
-use std::collections::HashMap;
 use std::fmt::Debug;
 use std::hash::Hasher;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum RandomNumberGenerator {
-    Hash {
-        year: u32,
-        usage: u32,
-    },
-    Mock {
-        values: HashMap<usize, u64>,
-        default: u64,
-    },
+    Hash { year: u32, usage: u32 },
+    Mock { values: Vec<u64>, default: u64 },
 }
 
 impl RandomNumberGenerator {
@@ -34,7 +27,7 @@ impl RandomNumberGenerator {
                 hasher.write_u32(*usage);
                 hasher.finish()
             }
-            Self::Mock { values, default } => *values.get(&index).unwrap_or(default),
+            Self::Mock { values, default } => *values.get(index).unwrap_or(default),
         }
     }
 }
