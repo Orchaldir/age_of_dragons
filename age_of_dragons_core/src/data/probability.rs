@@ -1,6 +1,7 @@
+use crate::generation::number::RandomNumberGenerator;
 use anyhow::{bail, Result};
 
-/// The probability to roll *threshold* or less on a die with *max* sides.
+/// The probability of an event happening.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct Probability {
     threshold: u32,
@@ -30,5 +31,42 @@ impl Probability {
         }
 
         Ok(Probability { threshold, max })
+    }
+
+    /// Check if the event is happening.
+    ///
+    /// ```
+    ///# use age_of_dragons_core::data::probability::Probability;
+    ///# use age_of_dragons_core::generation::number::RandomNumberGenerator;
+    ///# use std::collections::HashMap;
+    /// let rng = RandomNumberGenerator::Mock {values: HashMap::from([(0, 0), (1, 1), (2, 2), (3, 3), (4, 4)]), default: 0};
+    /// let probability = Probability::new(2, 4).unwrap();
+    ///
+    /// assert!(probability.check(&rng, 0));  // 0 < 2
+    /// assert!(probability.check(&rng, 1));  // 1 < 2
+    /// assert!(!probability.check(&rng, 2)); // 2 >= 2
+    /// assert!(!probability.check(&rng, 3)); // 3 >= 2
+    /// assert!(probability.check(&rng, 4));  // 4 % 4 = 0 < 2
+    /// ```
+    pub fn check(&self, rng: &RandomNumberGenerator, index: usize) -> bool {
+        rng.generate(index, self.max) < self.threshold
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::collections::HashMap;
+
+    #[test]
+    fn test_check_with_default() {
+        let rng = RandomNumberGenerator::Mock {
+            values: HashMap::new(),
+            default: 10,
+        };
+
+        assert!(!Probability::new(9, 100).unwrap().check(&rng, 0));
+        assert!(!Probability::new(10, 100).unwrap().check(&rng, 0));
+        assert!(Probability::new(11, 100).unwrap().check(&rng, 0));
     }
 }
