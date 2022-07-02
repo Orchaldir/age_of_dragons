@@ -2,7 +2,7 @@ use crate::data::character::CharacterId;
 
 pub mod manager;
 
-/// The type of a relationship between 2 [`Characters`](crate::data::character::Character).
+/// The type of a [`relationship`](CharacterRelation) between 2 [`Characters`](crate::data::character::Character).
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum CharacterRelationType {
     Mate,

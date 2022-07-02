@@ -16,7 +16,7 @@ impl CharacterRelationMgr {
         id1: CharacterId,
         relation_type: CharacterRelationType,
     ) {
-        self.check_size(id0, id1);
+        self.check_size_for_both(id0, id1);
         self.add_relation(id0, id1, relation_type);
         self.add_relation(id1, id0, relation_type);
     }
@@ -58,9 +58,12 @@ impl CharacterRelationMgr {
     }
 
     /// Makes sure that the vector of relations is large enough to contain both characters.
-    fn check_size(&mut self, id0: CharacterId, id1: CharacterId) {
-        let min_size = id0.0.max(id1.0);
+    fn check_size_for_both(&mut self, id0: CharacterId, id1: CharacterId) {
+        self.check_size(id0.0.max(id1.0));
+    }
 
+    /// Makes sure that the vector of relations is large enough to contain the character.
+    fn check_size(&mut self, min_size: usize) {
         if self.relations.len() <= min_size {
             let missing_characters = (min_size - self.relations.len()) + 1;
 
@@ -68,5 +71,24 @@ impl CharacterRelationMgr {
                 self.relations.push(Vec::new());
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_get_relations_with_unknown_id() {
+        let mut manager = CharacterRelationMgr::default();
+        let id0 = CharacterId::new(0);
+        let id1 = CharacterId::new(1);
+        manager.check_size(0);
+
+        assert!(manager.get_relations_between(id0, id1).is_empty());
+        assert!(manager.get_relations_between(id1, id0).is_empty());
+
+        assert!(manager.get_relations_of(id0).is_empty());
+        assert!(manager.get_relations_of(id1).is_empty());
     }
 }
