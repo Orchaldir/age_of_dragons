@@ -9,6 +9,7 @@ use age_of_dragons_core::data::character::{Character, CharacterId};
 use age_of_dragons_core::data::time::{Date, Duration};
 use age_of_dragons_core::data::SimulationData;
 use anyhow::Result;
+use age_of_dragons_core::data::character::relation::manager::CharacterRelationMgr;
 
 pub fn init_simulation() -> SimulationData {
     let race_manager = init_races();
@@ -18,6 +19,7 @@ pub fn init_simulation() -> SimulationData {
     SimulationData {
         race_manager,
         character_manager,
+        relation_manager: CharacterRelationMgr::default(),
         date: Date::new(2),
     }
 }

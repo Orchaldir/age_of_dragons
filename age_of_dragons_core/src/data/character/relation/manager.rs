@@ -35,7 +35,7 @@ impl CharacterRelationMgr {
         }
     }
 
-    /// Returns all the [`relations`](CharacterRelation) between 2 [`Characters`](crate::data::character::Character).
+    /// Returns all [`relations`](CharacterRelation) between 2 [`Characters`](crate::data::character::Character).
     pub fn get_relations_between(
         &self,
         id0: CharacterId,
@@ -52,9 +52,21 @@ impl CharacterRelationMgr {
             .unwrap_or_default()
     }
 
-    /// Returns all the [`relations`](CharacterRelation) of a [`Character`](crate::data::character::Character).
+    /// Returns all [`relations`](CharacterRelation) of a [`Character`](crate::data::character::Character).
     pub fn get_relations_of(&self, id: CharacterId) -> &[CharacterRelation] {
         self.relations.get(id.id()).unwrap_or(&self.no_relations)
+    }
+
+    /// Has the [`character`](crate::data::character::Character) a [`relation`](CharacterRelation) of a specific [`type`](CharacterRelationType)?
+    pub fn has_relation(&self, id: CharacterId, relation_type: CharacterRelationType) -> bool {
+        self.relations
+            .get(id.id())
+            .filter(|relations| {
+                relations
+                    .iter()
+                    .any(|relation| relation.relation_type == relation_type)
+            })
+            .is_some()
     }
 
     /// Makes sure that the vector of relations is large enough to contain both characters.

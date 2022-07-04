@@ -1,5 +1,6 @@
 use crate::data::character::manager::CharacterMgr;
 use crate::data::character::race::manager::RaceMgr;
+use crate::data::character::relation::manager::CharacterRelationMgr;
 use crate::data::character::{Character, CharacterId};
 use crate::data::time::Date;
 use anyhow::Result;
@@ -13,6 +14,7 @@ pub mod time;
 pub struct SimulationData {
     pub race_manager: RaceMgr,
     pub character_manager: CharacterMgr,
+    pub relation_manager: CharacterRelationMgr,
     pub date: Date,
 }
 
