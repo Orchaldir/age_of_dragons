@@ -8,5 +8,11 @@
     <p><b>Birth Date:</b> {{ birth_date }}</p>
     <p><b>Age:</b> {{ age }}</p>
     <p><b>Stage:</b> {{ stage }}</p>
+    <p><b>Relations</b></p>
+    <ul>
+    {% for r in relations %}
+      <li><a href="/character/{{ r.0 }}">{{ r.1 }}</a> ({{ r.2 }})</li>
+    {% endfor %}
+    </ul>
     <p><a href="/">Back</a></p>
 {% endblock content %}

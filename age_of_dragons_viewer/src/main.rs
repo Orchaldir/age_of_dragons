@@ -90,9 +90,27 @@ fn character(data: &State<ViewerData>, id: usize) -> Option<Template> {
                     gender: format!("{:?}", character.gender()),
                     birth_date: character.birth_date().year(),
                     age: character.calculate_age(data.date).year(),
+                    relations: visualize_relations(&data, character.id()),
                 },
             )
         })
+}
+
+fn visualize_relations(data: &SimulationData, id: CharacterId) -> Vec<(usize, &str, String)> {
+    data.relation_manager
+        .get_relations_of(id)
+        .iter()
+        .map(|relation| {
+            (
+                relation.target().id(),
+                data.character_manager
+                    .get(relation.target())
+                    .map(|other| other.name().to_str())
+                    .unwrap_or("Unknown"),
+                format!("{:?}", relation.relation_type()),
+            )
+        })
+        .collect()
 }
 
 #[get("/race")]

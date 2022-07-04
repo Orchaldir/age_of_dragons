@@ -14,3 +14,13 @@ pub struct CharacterRelation {
     id: CharacterId,
     relation_type: CharacterRelationType,
 }
+
+impl CharacterRelation {
+    pub fn target(&self) -> CharacterId {
+        self.id
+    }
+
+    pub fn relation_type(&self) -> CharacterRelationType {
+        self.relation_type
+    }
+}

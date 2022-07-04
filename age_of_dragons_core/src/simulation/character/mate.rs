@@ -8,6 +8,7 @@ use CharacterRelationType::Mate;
 /// Simulates [`characters`](Character) finding mates.
 pub fn simulate_finding_mate(data: &mut SimulationData) {
     for (female, male) in calculate_new_mates(data) {
+        println!("{:?} & {:?} become mates", female, male);
         data.relation_manager
             .add_relation_between(female, male, Mate);
     }
