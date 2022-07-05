@@ -213,9 +213,12 @@ pub mod tests {
             .unwrap()
     }
 
-    pub fn create_immortal_race(id: RaceId) -> Result<Race> {
+    pub fn create_immortal_race(manager: &mut RaceMgr) -> RaceId {
         let stage = LifeStage::new("Immortal", 0, None, None).unwrap();
         let stages = vec![stage];
-        Race::new(id.id(), "Immortal Race", NoGender, stages)
+
+        manager
+            .create(|id| Race::new(id.id(), "Immortal Race", NoGender, stages))
+            .unwrap()
     }
 }

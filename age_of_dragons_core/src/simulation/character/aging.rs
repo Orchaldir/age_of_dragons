@@ -133,10 +133,7 @@ mod tests {
     #[test]
     fn test_immortal_race_never_dies() {
         let mut data = SimulationData::default();
-        let race_id = data
-            .race_manager
-            .create(|id| create_immortal_race(id))
-            .unwrap();
+        let race_id = create_immortal_race(&mut data.race_manager);
         let id = data
             .create_character(|id, date| {
                 Ok(Character::simple(id.id(), race_id, Female, date, None))
@@ -147,6 +144,31 @@ mod tests {
             simulate_aging(&mut data);
 
             assert_aging(&data, id, i, true, 0);
+
+            data.date.increase_year();
+        }
+    }
+
+    #[test]
+    fn test_dead_never_age() {
+        let mut data = SimulationData::default();
+        let race_id = create_mortal_race(&mut data.race_manager, 1, 3);
+        let id = data
+            .create_character(|id, date| {
+                Ok(Character::simple(
+                    id.id(),
+                    race_id,
+                    Female,
+                    date,
+                    Some(date),
+                ))
+            })
+            .unwrap();
+
+        for _i in 0..10 {
+            simulate_aging(&mut data);
+
+            assert_aging(&data, id, 0, false, 0);
 
             data.date.increase_year();
         }
