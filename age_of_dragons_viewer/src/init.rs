@@ -8,7 +8,6 @@ use age_of_dragons_core::data::character::race::reproduction::ReproductionOption
 use age_of_dragons_core::data::character::race::stage::LifeStage;
 use age_of_dragons_core::data::character::race::{Race, RaceId};
 use age_of_dragons_core::data::character::relation::manager::CharacterRelationMgr;
-use age_of_dragons_core::data::character::relation::CharacterRelationType::Mate;
 use age_of_dragons_core::data::character::{Character, CharacterId};
 use age_of_dragons_core::data::probability::Probability;
 use age_of_dragons_core::data::time::{Date, Duration};
@@ -19,8 +18,7 @@ pub fn init_simulation() -> SimulationData {
     let race_manager = init_races();
     let dragon = race_manager.get(RaceId::new(0)).unwrap();
     let character_manager = init_characters(dragon);
-    let mut relation_manager = CharacterRelationMgr::default();
-    relation_manager.add_relation_between(CharacterId::new(0), CharacterId::new(1), Mate);
+    let relation_manager = CharacterRelationMgr::default();
 
     SimulationData {
         race_manager,

@@ -1,5 +1,3 @@
-use crate::data::character::gender::Gender;
-use crate::data::character::gender::Gender::{Female, Male};
 use crate::data::character::relation::CharacterRelationType;
 use crate::data::character::{Character, CharacterId};
 use crate::data::SimulationData;
@@ -18,7 +16,7 @@ fn calculate_new_mates(data: &SimulationData) -> Vec<(CharacterId, CharacterId)>
     data.character_manager
         .get_all()
         .iter()
-        .filter(|character| is_valid_mate(data, character, Female))
+        .filter(|character| is_valid_mate(data, character))
         .filter_map(|character| {
             find_matching_character(data, character).map(|other| (character.id(), other))
         })
@@ -32,9 +30,8 @@ fn find_matching_character(data: &SimulationData, character: &Character) -> Opti
         .map(|other| other.id())
 }
 
-fn is_valid_mate(data: &SimulationData, character: &Character, gender: Gender) -> bool {
+fn is_valid_mate(data: &SimulationData, character: &Character) -> bool {
     character.is_alive()
-        && character.gender() == gender
         && data
             .race_manager
             .get_life_stage(character)
@@ -43,5 +40,7 @@ fn is_valid_mate(data: &SimulationData, character: &Character, gender: Gender) -
 }
 
 fn is_valid_match(data: &SimulationData, character: &Character, candidate: &Character) -> bool {
-    character.race_id() == candidate.race_id() && is_valid_mate(data, candidate, Male)
+    character.race_id() == candidate.race_id()
+        && character.gender() != candidate.gender()
+        && is_valid_mate(data, candidate)
 }
