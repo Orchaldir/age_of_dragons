@@ -40,13 +40,14 @@ impl CharacterRelationMgr {
         &self,
         id0: CharacterId,
         id1: CharacterId,
-    ) -> Vec<&CharacterRelation> {
+    ) -> Vec<CharacterRelationType> {
         self.relations
             .get(id0.id())
             .map(|relations| {
                 relations
                     .iter()
                     .filter(|relation| relation.id == id1)
+                    .map(|relation| relation.relation_type)
                     .collect()
             })
             .unwrap_or_default()
