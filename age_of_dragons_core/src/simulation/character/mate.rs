@@ -56,14 +56,8 @@ mod tests {
     fn test_2_valid_characters_becoming_mates() {
         let mut data = SimulationData::default();
         let race_id = create_mortal_race(&mut data.race_manager, 1, 3);
-        let id0 = data
-            .create_character(|id, date| {
-                Ok(Character::simple(id.id(), race_id, Female, date, None))
-            })
-            .unwrap();
-        let id1 = data
-            .create_character(|id, date| Ok(Character::simple(id.id(), race_id, Male, date, None)))
-            .unwrap();
+        let id0 = data.create_character("C0", race_id, Female).unwrap();
+        let id1 = data.create_character("C1", race_id, Male).unwrap();
 
         data.date.increase_year();
         data.date.increase_year();

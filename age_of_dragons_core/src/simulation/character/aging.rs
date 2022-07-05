@@ -78,7 +78,7 @@ fn calculate_aging_effect(data: &SimulationData, character: &Character) -> Optio
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::data::character::gender::Gender::Female;
+    use crate::data::character::gender::Gender::{Female, Genderless};
     use crate::data::character::race::tests::{create_immortal_race, create_mortal_race};
     use crate::data::time::Duration;
 
@@ -86,11 +86,7 @@ mod tests {
     fn test_mortal_race() {
         let mut data = SimulationData::default();
         let race_id = create_mortal_race(&mut data.race_manager, 1, 3);
-        let id = data
-            .create_character(|id, date| {
-                Ok(Character::simple(id.id(), race_id, Female, date, None))
-            })
-            .unwrap();
+        let id = data.create_character("C", race_id, Female).unwrap();
 
         simulate_aging(&mut data);
 
@@ -134,11 +130,7 @@ mod tests {
     fn test_immortal_race_never_dies() {
         let mut data = SimulationData::default();
         let race_id = create_immortal_race(&mut data.race_manager);
-        let id = data
-            .create_character(|id, date| {
-                Ok(Character::simple(id.id(), race_id, Female, date, None))
-            })
-            .unwrap();
+        let id = data.create_character("C", race_id, Genderless).unwrap();
 
         for i in 0..100 {
             simulate_aging(&mut data);
@@ -153,17 +145,11 @@ mod tests {
     fn test_dead_never_age() {
         let mut data = SimulationData::default();
         let race_id = create_mortal_race(&mut data.race_manager, 1, 3);
-        let id = data
-            .create_character(|id, date| {
-                Ok(Character::simple(
-                    id.id(),
-                    race_id,
-                    Female,
-                    date,
-                    Some(date),
-                ))
-            })
-            .unwrap();
+        let id = data.create_character("C", race_id, Female).unwrap();
+        data.character_manager
+            .get_mut(id)
+            .unwrap()
+            .set_death_date(data.date);
 
         for _i in 0..10 {
             simulate_aging(&mut data);

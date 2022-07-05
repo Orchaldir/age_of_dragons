@@ -1,5 +1,7 @@
+use crate::data::character::gender::Gender;
 use crate::data::character::manager::CharacterMgr;
 use crate::data::character::race::manager::RaceMgr;
+use crate::data::character::race::RaceId;
 use crate::data::character::relation::manager::CharacterRelationMgr;
 use crate::data::character::{Character, CharacterId};
 use crate::data::time::Date;
@@ -19,11 +21,18 @@ pub struct SimulationData {
 }
 
 impl SimulationData {
-    /// Uses the function *f* to create a [`Character`] with the next [`CharacterId`] and the current date as birthdate.
-    pub fn create_character<F>(&mut self, f: F) -> Result<CharacterId>
-    where
-        F: FnOnce(CharacterId, Date) -> Result<Character>,
-    {
-        self.character_manager.create(|id| f(id, self.date))
+    /// Creates a [`Character`] with the next [`CharacterId`] and the current date as birthdate.
+    pub fn create_character<S: Into<String>>(
+        &mut self,
+        name: S,
+        race_id: RaceId,
+        gender: Gender,
+    ) -> Result<CharacterId> {
+        let race = self
+            .race_manager
+            .get(race_id)
+            .expect("Cannot create character with unknown race!");
+        self.character_manager
+            .create(|id| Character::new(id.id(), name, race, gender, self.date, None))
     }
 }
