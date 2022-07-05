@@ -10,12 +10,25 @@ pub struct CharacterRelationMgr {
 
 impl CharacterRelationMgr {
     /// Returns all the [`relations`](CharacterRelation) between 2 [`Characters`](crate::data::character::Character).
+    ///
+    /// # Panic
+    ///
+    /// Panics if both ids are the same character:
+    ///
+    /// ```should_panic
+    ///# use age_of_dragons_core::data::character::CharacterId;
+    ///# use age_of_dragons_core::data::character::relation::CharacterRelationType::Mate;
+    ///# use age_of_dragons_core::data::character::relation::manager::CharacterRelationMgr;
+    /// let id = CharacterId::new(0);
+    /// CharacterRelationMgr::default().add_relation_between(id, id, Mate);
+    /// ```
     pub fn add_relation_between(
         &mut self,
         id0: CharacterId,
         id1: CharacterId,
         relation_type: CharacterRelationType,
     ) {
+        assert_ne!(id0, id1, "Character can't have a relation with itself!");
         self.check_size_for_both(id0, id1);
         self.add_relation(id0, id1, relation_type);
         self.add_relation(id1, id0, relation_type);

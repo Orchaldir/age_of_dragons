@@ -85,10 +85,7 @@ mod tests {
     #[test]
     fn test_mortal_race() {
         let mut data = SimulationData::default();
-        let race_id = data
-            .race_manager
-            .create(|id| create_mortal_race(id, 1, 3))
-            .unwrap();
+        let race_id = create_mortal_race(&mut data.race_manager, 1, 3);
         let id = data
             .create_character(|id, date| {
                 Ok(Character::simple(id.id(), race_id, Female, date, None))
