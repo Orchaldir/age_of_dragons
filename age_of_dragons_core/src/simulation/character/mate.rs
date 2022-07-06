@@ -50,24 +50,55 @@ fn is_valid_match(data: &SimulationData, character: &Character, candidate: &Char
 mod tests {
     use super::*;
     use crate::data::character::gender::Gender;
-    use crate::data::character::gender::Gender::{Female, Male};
-    use crate::data::character::race::tests::create_mortal_race;
+    use crate::data::character::gender::Gender::{Female, Genderless, Male};
+    use crate::data::character::race::tests::{create_immortal_race, create_mortal_race};
     use crate::simulation::character::aging::simulate_aging;
 
     #[test]
-    fn test_2_valid_characters_becoming_mates() {
+    fn two_valid_characters_becoming_mates() {
         test(Female, Male, vec![Mate]);
         test(Male, Female, vec![Mate]);
     }
 
     #[test]
-    fn test_same_gender_cant_become_mates() {
+    fn same_gender_cant_become_mates() {
         test(Female, Female, vec![]);
         test(Male, Male, vec![]);
     }
 
     #[test]
-    fn test_2_characters_cant_becoming_mates_multiple_times() {
+    fn races_that_dont_reproduce_cant_become_mates() {
+        let mut data = SimulationData::default();
+        let race_id = create_immortal_race(&mut data.race_manager);
+        let id0 = data.create_character("C0", race_id, Genderless).unwrap();
+        let id1 = data.create_character("C1", race_id, Genderless).unwrap();
+
+        for _i in 0..10 {
+            data.date.increase_year();
+            simulate_finding_mate(&mut data);
+
+            assert_mate(&mut data, id0, id1, vec![]);
+        }
+    }
+
+    #[test]
+    fn different_races_cant_become_mates() {
+        let mut data = SimulationData::default();
+        let race_id0 = create_mortal_race(&mut data.race_manager, 1, 3);
+        let race_id1 = create_mortal_race(&mut data.race_manager, 1, 3);
+        let id0 = data.create_character("C0", race_id0, Female).unwrap();
+        let id1 = data.create_character("C1", race_id1, Male).unwrap();
+
+        data.date.increase_year();
+        data.date.increase_year();
+        simulate_aging(&mut data);
+        simulate_finding_mate(&mut data);
+
+        assert_mate(&mut data, id0, id1, vec![]);
+    }
+
+    #[test]
+    fn two_characters_cant_becoming_mates_multiple_times() {
         let mut data = SimulationData::default();
         let race_id = create_mortal_race(&mut data.race_manager, 1, 3);
         let id0 = data.create_character("C0", race_id, Female).unwrap();
