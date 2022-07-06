@@ -37,6 +37,7 @@ fn can_become_mate(data: &SimulationData, character: &Character) -> bool {
             .get_life_stage(character)
             .reproduction()
             .is_some()
+        && !data.relation_manager.has_relation(character.id(), Mate)
 }
 
 fn is_valid_match(data: &SimulationData, character: &Character, candidate: &Character) -> bool {
@@ -48,12 +49,25 @@ fn is_valid_match(data: &SimulationData, character: &Character, candidate: &Char
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::data::character::gender::Gender;
     use crate::data::character::gender::Gender::{Female, Male};
     use crate::data::character::race::tests::create_mortal_race;
     use crate::simulation::character::aging::simulate_aging;
 
     #[test]
     fn test_2_valid_characters_becoming_mates() {
+        test(Female, Male, vec![Mate]);
+        test(Male, Female, vec![Mate]);
+    }
+
+    #[test]
+    fn test_same_gender_cant_become_mates() {
+        test(Female, Female, vec![]);
+        test(Male, Male, vec![]);
+    }
+
+    #[test]
+    fn test_2_characters_cant_becoming_mates_multiple_times() {
         let mut data = SimulationData::default();
         let race_id = create_mortal_race(&mut data.race_manager, 1, 3);
         let id0 = data.create_character("C0", race_id, Female).unwrap();
@@ -64,12 +78,52 @@ mod tests {
         simulate_aging(&mut data);
         simulate_finding_mate(&mut data);
 
+        assert_mate(&mut data, id0, id1, vec![Mate]);
+
+        data.date.increase_year();
+        simulate_finding_mate(&mut data);
+
+        assert_mate(&mut data, id0, id1, vec![Mate]);
+    }
+
+    fn test(gender0: Gender, gender1: Gender, result: Vec<CharacterRelationType>) {
+        let mut data = SimulationData::default();
+        let race_id = create_mortal_race(&mut data.race_manager, 1, 3);
+        let id0 = data.create_character("C0", race_id, gender0).unwrap();
+        let id1 = data.create_character("C1", race_id, gender1).unwrap();
+
+        // too young
+        simulate_finding_mate(&mut data);
+
+        assert_mate(&mut data, id0, id1, vec![]);
+
+        // too young
+        data.date.increase_year();
+        simulate_aging(&mut data);
+        simulate_finding_mate(&mut data);
+
+        assert_mate(&mut data, id0, id1, vec![]);
+
+        // correct age
+        data.date.increase_year();
+        simulate_aging(&mut data);
+        simulate_finding_mate(&mut data);
+
+        assert_mate(&mut data, id0, id1, result);
+    }
+
+    fn assert_mate(
+        data: &SimulationData,
+        id0: CharacterId,
+        id1: CharacterId,
+        result: Vec<CharacterRelationType>,
+    ) {
         assert_eq!(
-            vec![Mate],
+            result,
             data.relation_manager.get_relations_between(id0, id1)
         );
         assert_eq!(
-            vec![Mate],
+            result,
             data.relation_manager.get_relations_between(id1, id0)
         );
     }
