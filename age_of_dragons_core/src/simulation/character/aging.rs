@@ -78,22 +78,15 @@ fn calculate_aging_effect(data: &SimulationData, character: &Character) -> Optio
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::data::character::gender::Gender::Female;
+    use crate::data::character::gender::Gender::{Female, Genderless};
     use crate::data::character::race::tests::{create_immortal_race, create_mortal_race};
     use crate::data::time::Duration;
 
     #[test]
-    fn test_mortal_race() {
+    fn mortals_die() {
         let mut data = SimulationData::default();
-        let race_id = data
-            .race_manager
-            .create(|id| create_mortal_race(id, 1, 3))
-            .unwrap();
-        let id = data
-            .create_character(|id, date| {
-                Ok(Character::simple(id.id(), race_id, Female, date, None))
-            })
-            .unwrap();
+        let race_id = create_mortal_race(&mut data.race_manager, 1, 3);
+        let id = data.create_character("C", race_id, Female).unwrap();
 
         simulate_aging(&mut data);
 
@@ -134,22 +127,34 @@ mod tests {
     }
 
     #[test]
-    fn test_immortal_race_never_dies() {
+    fn immortal_race_never_dies() {
         let mut data = SimulationData::default();
-        let race_id = data
-            .race_manager
-            .create(|id| create_immortal_race(id))
-            .unwrap();
-        let id = data
-            .create_character(|id, date| {
-                Ok(Character::simple(id.id(), race_id, Female, date, None))
-            })
-            .unwrap();
+        let race_id = create_immortal_race(&mut data.race_manager);
+        let id = data.create_character("C", race_id, Genderless).unwrap();
 
         for i in 0..100 {
             simulate_aging(&mut data);
 
             assert_aging(&data, id, i, true, 0);
+
+            data.date.increase_year();
+        }
+    }
+
+    #[test]
+    fn dead_never_age() {
+        let mut data = SimulationData::default();
+        let race_id = create_mortal_race(&mut data.race_manager, 1, 3);
+        let id = data.create_character("C", race_id, Female).unwrap();
+        data.character_manager
+            .get_mut(id)
+            .unwrap()
+            .set_death_date(data.date);
+
+        for _i in 0..10 {
+            simulate_aging(&mut data);
+
+            assert_aging(&data, id, 0, false, 0);
 
             data.date.increase_year();
         }

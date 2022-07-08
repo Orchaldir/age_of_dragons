@@ -8,6 +8,7 @@ use anyhow::{bail, Context, Result};
 pub mod gender;
 pub mod manager;
 pub mod race;
+pub mod relation;
 
 /// The id of a [`Character`].
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]

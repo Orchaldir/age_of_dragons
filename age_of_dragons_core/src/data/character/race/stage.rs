@@ -1,3 +1,4 @@
+use crate::data::character::race::reproduction::ReproductionOption;
 use crate::data::name::Name;
 use crate::data::time::Duration;
 use anyhow::{Context, Result};
@@ -27,11 +28,17 @@ pub struct LifeStage {
     id: LifeStageId,
     /// The life stage lasts forever, if it has no max age.
     max_age: Option<Duration>,
+    reproduction: Option<ReproductionOption>,
 }
 
 impl LifeStage {
     /// Creates a life stage.
-    pub fn new<S: Into<String>>(name: S, index: usize, max_age: Option<Duration>) -> Result<Self> {
+    pub fn new<S: Into<String>>(
+        name: S,
+        index: usize,
+        max_age: Option<Duration>,
+        reproduction: Option<ReproductionOption>,
+    ) -> Result<Self> {
         let name = name.into();
         let name =
             Name::new(name).with_context(|| format!("Failed to create life stage {}", index))?;
@@ -40,6 +47,7 @@ impl LifeStage {
             name,
             id: LifeStageId::new(index),
             max_age,
+            reproduction,
         })
     }
 
@@ -49,6 +57,7 @@ impl LifeStage {
             name: Name::new("Life Stage").unwrap(),
             id: LifeStageId::new(0),
             max_age: None,
+            reproduction: None,
         }
     }
 
@@ -62,5 +71,9 @@ impl LifeStage {
 
     pub fn max_age(&self) -> &Option<Duration> {
         &self.max_age
+    }
+
+    pub fn reproduction(&self) -> &Option<ReproductionOption> {
+        &self.reproduction
     }
 }

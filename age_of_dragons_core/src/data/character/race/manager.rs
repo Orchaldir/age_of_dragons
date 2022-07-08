@@ -1,4 +1,6 @@
+use crate::data::character::race::stage::LifeStage;
 use crate::data::character::race::{Race, RaceId};
+use crate::data::character::Character;
 use anyhow::Result;
 
 /// Stores all the [`Race`]s.
@@ -24,5 +26,18 @@ impl RaceMgr {
 
     pub fn get(&self, id: RaceId) -> Option<&Race> {
         self.races.get(id.0)
+    }
+
+    /// Returns the [`LifeStage`] of the [`Character`].
+    ///
+    /// # Panic
+    ///
+    /// The function panics if the character's [`Race`] or [`LifeStage`] don't exist.
+    pub fn get_life_stage(&self, character: &Character) -> &LifeStage {
+        self.get(character.race_id)
+            .expect("Character has invalid race!")
+            .stages
+            .get(character.life_stage.index())
+            .expect("Character has invalid life stage!")
     }
 }
