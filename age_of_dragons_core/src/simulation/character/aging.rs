@@ -83,7 +83,7 @@ mod tests {
     use crate::data::time::Duration;
 
     #[test]
-    fn test_mortal_race() {
+    fn mortals_die() {
         let mut data = SimulationData::default();
         let race_id = create_mortal_race(&mut data.race_manager, 1, 3);
         let id = data.create_character("C", race_id, Female).unwrap();
@@ -127,7 +127,7 @@ mod tests {
     }
 
     #[test]
-    fn test_immortal_race_never_dies() {
+    fn immortal_race_never_dies() {
         let mut data = SimulationData::default();
         let race_id = create_immortal_race(&mut data.race_manager);
         let id = data.create_character("C", race_id, Genderless).unwrap();
@@ -142,7 +142,7 @@ mod tests {
     }
 
     #[test]
-    fn test_dead_never_age() {
+    fn dead_never_age() {
         let mut data = SimulationData::default();
         let race_id = create_mortal_race(&mut data.race_manager, 1, 3);
         let id = data.create_character("C", race_id, Female).unwrap();
